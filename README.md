@@ -3,7 +3,7 @@ YOURLS URL preview plugin with robust cache features utilizing PhantomJS
 
 by Josh Panter [Unfettered](https://unfettered.net)
 
-Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) peronal URL shortener that uses the power of [PhantomJS](http://phantomjs.org/) headless web browser via the [Screen](https://github.com/microweber/screen) PHP library.
+Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal URL shortener that uses the power of [PhantomJS](http://phantomjs.org/) headless web browser via the [Screen](https://github.com/microweber/screen) PHP library.
 
 ## Features & Function
 
