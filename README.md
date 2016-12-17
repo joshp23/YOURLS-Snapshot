@@ -1,5 +1,5 @@
 # YOURLS-Snapshot
-YOURLS URL preview plugin with robust cache features utilizing PhantomJS
+YOURLS URL preview plugin with image caching powered by PhantomJS
 
 by Josh Panter [Unfettered](https://unfettered.net)
 
