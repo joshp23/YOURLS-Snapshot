@@ -33,7 +33,7 @@ Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal U
   ```
   $sudo apt-get install fontconfig freetype*
   ```
-* Download this repository and extract the `snapshot` folder into `YOURLS/user/plugins/`
+* Grab the [latest release](https://github.com/joshp23/YOURLS-Snapshot/releases/latest) and extract the `snapshot` folder into `YOURLS/user/plugins/`
 * Copy or link the file `YOURLS/user/plugins/snapshot/assets/srv.php` into `YOURLS/pages/`
 * Create the directory `YOURLS/user/cache/` and make it writable by your webserver
 * Recursively make the folder `YOURLS/user/plugins/snapshot/screen/jobs` writable by your webserver
