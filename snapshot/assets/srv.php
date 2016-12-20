@@ -2,7 +2,7 @@
 /*	
  *	=======================================================================
  *
- *	U-SRV v 1.1.4
+ *	U-SRV v 1.1.5
  *		
  *	This is a universal file server (for YOURLS)
  *	by Josh Panter <joshu at unfettered dot net>
@@ -125,6 +125,7 @@ switch ($pid) {
 
 	case 'snapshot':
 		$path = yourls_get_option('snapshot_cache_path');
+		if($path == null) $path = 'user/cache/preview';
 		$path = $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
 		break;
 		
