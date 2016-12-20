@@ -221,7 +221,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 								<p>
 									<input type="text" size=20 id="snapshot_cache_path" name="snapshot_cache_path" value="$opt[10]" /><small> This folder needs to be manually created, and must be writable by your webserver. ie <code>chmod 777</code></small>
 								</p>
-								<p>The default location is in the YOURLS root, ie <code>/path/to/www/YOURLS/cache/</code></p>
+								<p>The default location is in the YOURLS user folder, ie <code>/path/to/www/YOURLS/user/cache/preview/</code></p>
 							</div>
 							
 							<h4>Expiration</h4>
@@ -352,7 +352,7 @@ function snapshot_config() {
 	if( $clip_h  	== null ) $clip_h 	= '640';
 	if( $imgType 	== null ) $imgType 	= 'jpg';
 	if( $delay	== null ) $delay 	= '1500';		// 1.5 seconds
-	if( $cache 	== null ) $cache 	= 'cache';
+	if( $cache 	== null ) $cache 	= 'user/cache/preview';
 	if( $cacheX	== null ) $cacheX 	= '1';
 	if( $cacheXM 	== null ) $cacheXM 	= 'hours';
 	if( $dwidth 	== null ) $dwidth 	= '560';
@@ -586,7 +586,7 @@ function snapshot_screen($keyword, $url) {
 function snapshot_cache_flush($age) {
 
 	$cache	 = yourls_get_option( 'snapshot_cache_path' );
-	if( $cache 	 == null ) $cache 	= 'cache';
+	if( $cache 	 == null ) $cache 	= 'user/cache/preview';
 	$dir = $_SERVER['DOCUMENT_ROOT'] . '/' . $cache;
 	$now = time();
 	
@@ -632,7 +632,7 @@ function snapshot_cache_flush_api() {
 function snapshot_cache_stats() {
 
 	$cache = yourls_get_option( 'snapshot_cache_path' );
-	if( $cache == null ) $cache = 'cache';
+	if( $cache == null ) $cache = 'user/cache/preview';
 	$dir   = $_SERVER['DOCUMENT_ROOT'] . '/' . $cache;
 	
 	$size	= snapshot_cache_size($dir);
