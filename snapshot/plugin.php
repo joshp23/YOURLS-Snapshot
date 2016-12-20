@@ -1,19 +1,22 @@
 <?php
 /*
 Plugin Name: Snapshot: Visual URL Preview
-Plugin URI: https://github.com/joshp23/YOURLS-snapshot
+Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 1.2.2
+Version: 2.0.0
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
+
 // No direct call
 if( !defined( 'YOURLS_ABSPATH' ) ) die();
+
 // Add the admin page
 yourls_add_action( 'plugins_loaded', 'snapshot_add_page' );
 function snapshot_add_page() {
         yourls_register_plugin_page( 'snapshot', 'Snapshot', 'snapshot_do_page' );
 }
+
 function snapshot_do_page() {
 
 	// Check if a form was submitted
@@ -28,7 +31,7 @@ function snapshot_do_page() {
 	$nonce = yourls_create_nonce( 'snapshot' );
 	
 	// some values necessary for display
-	if ( $opt[7] == 'jpg' ) {
+	if ( $opt[8] == 'jpg' ) {
 		$is_png = null;
 		$is_jpg = 'checked';
 	} else {
@@ -69,7 +72,6 @@ function snapshot_do_page() {
 			
 						<h3>Trigger Character</h3>
 						<p>
-							<label for="snapshot_char">Trigger character </label> 
 							<input type="text" size=3 id="snapshot_char" name="snapshot_char" value="$opt[0]" />
 						</p>
 						<p>Snapshot will look for a trailing chacter (or character pattern) to trigger the preview page.</p>
@@ -77,6 +79,13 @@ function snapshot_do_page() {
 				
 						</p>You are using the <strong>base $url_convert</strong> character set to encode your short urls, so you can use $trigger_scope as the trigger character, the default is "<code>~</code>"</p>
 						
+						<h3>Image Display Width</h3>
+						
+						<p>
+							<input type="text" size=4 id="snapshot_img_display_width" name="snapshot_img_display_width" value="$opt[1]" />
+						</p>
+						
+						<p>Set the display width for the image preview here. This is differnet than the settings in the next section, which have to do with file size/resolution and virtual screen capture size.</p>
 						<input type="hidden" name="nonce" value="$nonce" />
 						<p><input type="submit" value="Submit" /></p>
 					</form>
@@ -139,7 +148,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							
 							<div style="padding-left: 10pt;">
 								<p>
-									<input type="text" size=20 id="snapshot_phantomjs_path" name="snapshot_phantomjs_path" value="$opt[1]" />
+									<input type="text" size=20 id="snapshot_phantomjs_path" name="snapshot_phantomjs_path" value="$opt[2]" />
 								</p>
 								<p><strong>Example:</strong> enter <code>/usr/bin/</code> if you find your binary at <code>/usr/bin/phantomjs</code> <small> This is the correct value if you installed phantomjs via apt in Ubuntu</small></p>
 								
@@ -149,7 +158,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							
 							<div style="padding-left: 10pt;">
 								<p>
-									<input type="text" size=6 id="snapshot_timeout" name="snapshot_timeout" value="$opt[2]" />
+									<input type="text" size=6 id="snapshot_timeout" name="snapshot_timeout" value="$opt[3]" />
 								</p>
 								<p>Defines the timeout after which any resource requested will stop trying and proceed with other parts of the page.</p>
 								<p><strong>Example:</strong> <code>3000</code> will timeout at 3 seconds.</p>
@@ -164,8 +173,8 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							
 							<div style="padding-left: 10pt;">
 								<p>
-									<input type="text" size=4 id="snapshot_img_w" name="snapshot_img_w" value="$opt[3]" /> x
-									<input type="text" size=4 id="snapshot_img_h" name="snapshot_img_h" value="$opt[4]" />
+									<input type="text" size=4 id="snapshot_img_w" name="snapshot_img_w" value="$opt[4]" /> x
+									<input type="text" size=4 id="snapshot_img_h" name="snapshot_img_h" value="$opt[5]" />
 								</p>
 								<p>The dimensions of the virtual browser screen <small>Good to be the same as Clip.</small></p>
 							</div>
@@ -174,8 +183,8 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							
 							<div style="padding-left: 10pt;">
 								<p>
-									<input type="text" size=4 id="snapshot_clip_w" name="snapshot_img_w" value="$opt[5]" /> x
-									<input type="text" size=4 id="snapshot_clip_h" name="snapshot_img_h" value="$opt[6]" />
+									<input type="text" size=4 id="snapshot_clip_w" name="snapshot_img_w" value="$opt[6]" /> x
+									<input type="text" size=4 id="snapshot_clip_h" name="snapshot_img_h" value="$opt[7]" />
 								</p>
 								<p>This will clip the output image, resulting in an image file with the above dimensions.</p>
 							</div>
@@ -194,7 +203,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							
 							<div style="padding-left: 10pt;">
 								<p>
-									<input type="text" size=6 id="snapshot_delay" name="snapshot_delay" value="$opt[8]" />
+									<input type="text" size=6 id="snapshot_delay" name="snapshot_delay" value="$opt[9]" />
 								</p>
 								<p>Amount of time to wait after opening a page befor rendering an image, typically to allow scripts to load on the target page.</p>
 								<p><strong>Example:</strong> <code>1500</code> will timeout at 1.5 seconds.</p>
@@ -210,9 +219,9 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							
 							<div style="padding-left: 10pt;">
 								<p>
-									<input type="text" size=20 id="snapshot_cache_path" name="snapshot_cache_path" value="$opt[9]" /><small> This folder needs to be manually created, and must be writable by your webserver. ie <code>chmod 777</code></small>
+									<input type="text" size=20 id="snapshot_cache_path" name="snapshot_cache_path" value="$opt[10]" /><small> This folder needs to be manually created, and must be writable by your webserver. ie <code>chmod 777</code></small>
 								</p>
-								<p>The default location is in the YOURLS root, ie <code>/path/to/www/YOURLS/cache/</code></p>
+								<p>The default location is in the YOURLS user folder, ie <code>/path/to/www/YOURLS/user/cache/preview/</code></p>
 							</div>
 							
 							<h4>Expiration</h4>
@@ -220,14 +229,14 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							<div style="padding-left: 10pt;">
 								<p>
 									Replace an image when it is older than 
-									<input type="text" size=4 id="snapshot_cache_expire" name="snapshot_cache_expire" value="$opt[10]" />
+									<input type="text" size=4 id="snapshot_cache_expire" name="snapshot_cache_expire" value="$opt[11]" />
 									<select name="snapshot_cache_expire_mod">
-										<option value="$opt[11]" selected >Select One</option>
+										<option value="$opt[12]" selected >Select One</option>
 										<option value="min">Minutes</option>
 										<option value="hours">Hours</option>
 										<option value="days">Days</option>
 										<option value="weeks">Weeks</option>
-									</select> <small> Currently $opt[11]</small>.
+									</select> <small> Currently $opt[12]</small>.
 								</p>
 								<p>This can be helpful in case of frequent requests.</p>
 								
@@ -275,7 +284,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 						<li><code>action=cflush</code></li>
 					</ul>
 					
-					<p>This call will default to your Cache Expiration settings, currently: $opt[10] $opt[11].
+					<p>This call will default to your Cache Expiration settings, currently: $opt[11] $opt[12].
 					<p>You can override the default with the following parameters:</p>
 					<ul>
 						<li><code>age=</code>VALUE</li>
@@ -304,6 +313,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 		</div>
 HTML;
 }
+
 // CSS for YOURLS style preview page and plugin config
 yourls_add_action('html_head', 'img_css');
 function img_css(){
@@ -312,11 +322,13 @@ function img_css(){
 	echo '<link rel="stylesheet" href="/css/infos.css" type="text/css" media="screen" />';
 	echo '<script src="/js/infos.js" type="text/javascript"></script>';
 }
+
 // Get options and set defaults
 function snapshot_config() {
 
 	// Get values from DB
 	$char	 = yourls_get_option( 'snapshot_char' );
+	$dwidth  = yourls_get_option( 'snapshot_img_display_width' );
 	$binPath = yourls_get_option( 'snapshot_phantomjs_path' );
 	$timeOut = yourls_get_option( 'snapshot_timeout' );
 	$img_w	 = yourls_get_option( 'snapshot_img_w' );
@@ -331,6 +343,7 @@ function snapshot_config() {
 	
 	// Set defaults if necessary
 	if( $char	== null ) $char 	= '~';
+	if( $dwidth 	== null ) $dwidth 	= '560';
 	if( $binPath 	== null ) $binPath 	= '/usr/bin/';
 	if( $timeOut 	== null ) $timeOut 	= '3000';		// 3 seconds
 	if( $img_w 	== null ) $img_w 	= '800';
@@ -339,33 +352,38 @@ function snapshot_config() {
 	if( $clip_h  	== null ) $clip_h 	= '640';
 	if( $imgType 	== null ) $imgType 	= 'jpg';
 	if( $delay	== null ) $delay 	= '1500';		// 1.5 seconds
-	if( $cache 	== null ) $cache 	= 'cache';
+	if( $cache 	== null ) $cache 	= 'user/cache/preview';
 	if( $cacheX	== null ) $cacheX 	= '1';
 	if( $cacheXM 	== null ) $cacheXM 	= 'hours';
+	if( $dwidth 	== null ) $dwidth 	= '560';
 	
 	return array(
-	$char,		// opt [0]
-	$binPath,	// opt [1]
-	$timeOut,	// opt [2]
-	$img_w,		// opt [3]
-	$img_h,		// opt [4]
-	$clip_w,	// opt [5]
-	$clip_h,	// opt [6]
-	$imgType,	// opt [7]
-	$delay,		// opt [8]
-	$cache,		// opt [9]
-	$cacheX	,	// opt [10]
-	$cacheXM	// opt [11]
+	$char,		// opt[0]
+	$dwidth,	// opt[1]
+	$binPath,	// opt[2]
+	$timeOut,	// opt[3]
+	$img_w,		// opt[4]
+	$img_h,		// opt[5]
+	$clip_w,	// opt[6]
+	$clip_h,	// opt[7]
+	$imgType,	// opt[8]
+	$delay,		// opt[9]
+	$cache,		// opt[10]
+	$cacheX	,	// opt[11]
+	$cacheXM,	// opt[12]
 	);
 }
+
 // Check for form 0 - Main
 function snaphsot_form_0() {
 	if( isset( $_POST['snapshot_char'] ) ) {
 		// Check nonce
 		yourls_verify_nonce( 'snapshot' );
 		yourls_update_option( 'snapshot_char', $_POST['snapshot_char'] );
+	if(isset($_POST['snapshot_img_display_width'])) yourls_update_option( 'snapshot_img_display_width', $_POST['snapshot_img_display_width'] );
 	}
 }
+
 // Check for form 1 - Screen\PhantomJS
 function snaphsot_form_1() {
 	if( isset( $_POST['snapshot_phantomjs_path'] ) ) {
@@ -384,6 +402,7 @@ function snaphsot_form_1() {
 		if(isset($_POST['snapshot_cache_expire_mod'])) yourls_update_option( 'snapshot_cache_expire_mod', $_POST['snapshot_cache_expire_mod'] );
 	}
 }
+
 // Check for form 2 - Flush
 function snaphsot_form_2() {
 
@@ -404,6 +423,7 @@ function snaphsot_form_2() {
 		}
 	}
 }
+
 // Adjust human readable time into seconds
 function snapshot_age_mod($age, $mod) {
 	switch ($mod) {
@@ -424,6 +444,7 @@ function snapshot_age_mod($age, $mod) {
 	}
 	return $age;
 }
+
 // Handle failed loader request and check for trigger character
 yourls_add_action( 'loader_failed', 'snapshot_loader_failed' );
 function snapshot_loader_failed( $args ) {
@@ -440,6 +461,7 @@ function snapshot_loader_failed( $args ) {
 		die();
 	}
 }
+
 // Page router TODO
 // Show the template page TODO
 // Show the YOURLS style preview page
@@ -449,23 +471,38 @@ function snapshot_show( $keyword ) {
 	if (yourls_keyword_is_taken( $keyword ) == true) {
 	
 		// set variables for the page draw
-		$me 	= $_SERVER['HTTP_HOST'];
 		$title 	= yourls_get_keyword_title( $keyword );
 		$url   	= yourls_get_keyword_longurl( $keyword );
 		$base  	= YOURLS_SITE;
 		$l_ico 	= yourls_get_favicon_url( $url );
-		$s_ico 	= yourls_get_favicon_url( $me );
+		$s_ico 	= yourls_get_favicon_url( $base );
+		
+		// Build the querry
+		$pid 	= 'snapshot';
 		$img 	= snapshot_request($keyword, $url);
+		
+		// Set up the fallback error
+		if($img == 'alt') {
+			$pid = 'snapshot-alt';
+			$img = array(
+				'sorry.png',
+				'420'
+			);
+		}
+		
+		$now 	= date("YmdGi");
+		$key 	= md5($now . $pid);
 		
 		// draw the preview page
 		require_once( YOURLS_INC.'/functions-html.php' );
 		yourls_html_head( 'preview', 'Short URL preview' );
 		yourls_html_logo();
 		echo <<<HTML
-				<h2>Short Link &rArr; Long Link: $title</h2>
-				<p><img src="$s_ico" /> <strong><a href="$base/$keyword">$me/$keyword</a> &rArr;</strong> <img src="$l_ico" /> <strong><a href="$base/$keyword">$url</a></strong></p>
+				<h2>Short Link &rArr; Long Link | Preview</h2>
+				<h3>"$title"</h3>
+				<p><img src="$s_ico" /> <strong><a href="$base/$keyword">$base/$keyword</a> &rArr;</strong> <img src="$l_ico" /> <strong><a href="$base/$keyword">$url</a></strong></p>
 				<div id="live_p">
-					<img border=1 $img />	
+					<img border=1 src="$base/srv/?pid=$pid&key=$key&fn=$img[0]" width="$img[1]" />	
 				</div>
 				<p>To visit this link, please <strong><a href="$base/$keyword">click here</a></strong>.</p>
 				<p>Thank you.</p>
@@ -478,64 +515,70 @@ HTML;
 		die();
 	}
 }
+
 // process image request - check cache
 function snapshot_request($keyword, $url) { 
 
-	$opt 	= snapshot_config();
-	$age 	= $opt[10];
-	$mod 	= $opt[11];
-	$target = $opt[9] . '/' . md5($keyword) . '.' . $opt[7];
+	$opt  = snapshot_config();
+	$file = md5($keyword) . '.' . $opt[8];
+	$path = $opt[10] . '/' . $file;
 	
 	// calculate/set cachetimes
-	if (file_exists($target)) { 
-		$filetime	= filemtime($target);
-		$cachetime	= time()-$filetime-snapshot_age_mod($age, $mod);
+	if (file_exists($path)) { 
+		$filetime	= filemtime($path);
+		$cachetime	= time()-$filetime-snapshot_age_mod($opt[11], $opt[12]);
 	} else {
 		$cachetime	= -1;
 	}
 	
 	// get a new image if there is no fresh cache file
-	if (!file_exists($target) || $cachetime>=0) {
-		$pic = snapshot_screen($keyword, $url);
+	// return new or fresh cache image
+	if (!file_exists($path) || $cachetime>=0) {
+		return snapshot_screen($keyword, $url);
 	} else {
-		$pic = 'src="' . $target . '" width="560"';
+		return array (
+			$file,
+			$opt[1]
+		);
 	}
 	
-	// cleanup and return the image value
+	// clean up
 	clearstatcache();
-	return $pic;
 }
+
 // Get a new screenshot
 function snapshot_screen($keyword, $url) {
 
-	$opt 	 = snapshot_config();
-	$keyword = md5($keyword);
+	$opt  = snapshot_config();
+	$file = md5($keyword) . '.' . $opt[8];
 	
 	require_once( 'screen/autoload.php');
 
 	$screenCapture = new Screen\Capture($url);
-	$screenCapture->binPath = ($opt[1]);
+	$screenCapture->binPath = ($opt[2]);
 	$screenCapture->setOptions([
-    'ignore-ssl-errors' => 'yes',
+    	'ignore-ssl-errors' => 'yes',
 	]);
-	$screenCapture->setTimeout($opt[2]);
-	$screenCapture->setWidth($opt[3]);
-	$screenCapture->setHeight($opt[4]);
-	$screenCapture->setClipWidth($opt[5]);
-	$screenCapture->setClipHeight($opt[6]);
-	$screenCapture->setImageType($opt[7]);
-	$screenCapture->setDelay($opt[8]);
-	$screenCapture->output->setLocation($opt[9]);
+	$screenCapture->setTimeout($opt[3]);
+	$screenCapture->setWidth($opt[4]);
+	$screenCapture->setHeight($opt[5]);
+	$screenCapture->setClipWidth($opt[6]);
+	$screenCapture->setClipHeight($opt[7]);
+	$screenCapture->setImageType($opt[8]);
+	$screenCapture->setDelay($opt[9]);
+	$screenCapture->output->setLocation($opt[10]);
 	try {		
-		$screenCapture->save($keyword);
+		$screenCapture->save($file);
 		$screenCapture->jobs->clean();
-		return 'src="' . $opt[9] . '/' . $keyword . '.' . $opt[7] . '" width="560"';
-	} catch (Exception $e) {
-		$img = yourls_plugin_url( dirname( __FILE__ ) . '/assets/sorry.png');
-		return 'src="' . $img . '" width="420"';
-	}
-	
+		return array(
+			$file,
+			$opt[1]
+		);
+	} catch (Exception $e) { 
+		return 'alt';
+	}	
 }
+
 /*
 	CACHE FUNCTIONS
 */
@@ -543,12 +586,11 @@ function snapshot_screen($keyword, $url) {
 function snapshot_cache_flush($age) {
 
 	$cache	 = yourls_get_option( 'snapshot_cache_path' );
-	if( $cache 	 == null ) $cache 	= 'cache';
+	if( $cache 	 == null ) $cache 	= 'user/cache/preview';
 	$dir = $_SERVER['DOCUMENT_ROOT'] . '/' . $cache;
 	$now = time();
 	
 	if (file_exists($dir)) {
-		echo 'cache is found';
 		foreach (new DirectoryIterator($dir) as $fileInfo) {
 		    if ($fileInfo->isDot()) {
 		    continue;
@@ -557,17 +599,18 @@ function snapshot_cache_flush($age) {
 		        unlink($fileInfo->getRealPath());
 		    }
 		}
-		echo '<font color="green">Cache has been flushed, have a nice day.<font>';
+		echo '<font color="green">Cache has been flushed, have a nice day.</font>';
 	}
 }
+
 // api flush
 yourls_add_filter( 'api_action_cflush', 'snapshot_cache_flush_api' );
 function snapshot_cache_flush_api() {
 
 	$opt =  snapshot_config();
 	// get values from request/set defaults
-	$age = ( isset( $_REQUEST['age'] ) ? $_REQUEST['age'] : $opt[10] );
-	$mod = ( isset( $_REQUEST['mod'] ) ? $_REQUEST['mod'] : $opt[11] );
+	$age = ( isset( $_REQUEST['age'] ) ? $_REQUEST['age'] : $opt[11] );
+	$mod = ( isset( $_REQUEST['mod'] ) ? $_REQUEST['mod'] : $opt[12] );
 	// calculate and destroy
 	snapshot_age_mod($age, $mod);
 	if( snapshot_cache_flush($age) ) {
@@ -584,11 +627,12 @@ function snapshot_cache_flush_api() {
 		);
 	}
 }
+
 // get cache disk use data
 function snapshot_cache_stats() {
 
 	$cache = yourls_get_option( 'snapshot_cache_path' );
-	if( $cache == null ) $cache = 'cache';
+	if( $cache == null ) $cache = 'user/cache/preview';
 	$dir   = $_SERVER['DOCUMENT_ROOT'] . '/' . $cache;
 	
 	$size	= snapshot_cache_size($dir);
@@ -605,12 +649,14 @@ function snapshot_cache_stats() {
 		$remain		// cstat[3]
 	);
 }
+
 // population data
 function snapshot_cache_pop($dir) {
 
 	$fi = new FilesystemIterator($dir, FilesystemIterator::SKIP_DOTS);
 	return iterator_count($fi);
 }
+
 // total size
 function snapshot_cache_size($dir) {
     	
@@ -624,6 +670,7 @@ function snapshot_cache_size($dir) {
     $bytestotal = snapshot_format_size($bytestotal);
     return $bytestotal;
 }
+
 // format size into human readable number
 function snapshot_format_size($bytes){ 
 	$kb = 1024;
@@ -649,14 +696,15 @@ function snapshot_format_size($bytes){
 		return $bytes . ' B';
 	}
 }
+
 // Delete cached image on keyword delete
 yourls_add_action( 'delete_link', 'delete_snapshot_cache_img' );
 function delete_snapshot_cache_img( $args ) {
 	
 	$opt 	 = snapshot_config();
-	$dir 	 = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[9];
+	$dir 	 = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[10];
     	$keyword = $args[0];
     	
-    	$target  = $dir . '/' . md5($keyword) . '.' . $opt[7];
+    	$target  = $dir . '/' . md5($keyword) . '.' . $opt[8];
 	if (file_exists($target)) unlink($target);
 }

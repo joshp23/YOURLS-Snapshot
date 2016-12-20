@@ -34,17 +34,18 @@ Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal U
   $sudo apt-get install fontconfig freetype*
   ```
 * Download this repository and extract the `snapshot` folder into `YOURLS/user/plugins/`
-* Make sure that the folder `YOURLS/user/plugins/snapshot/screen/jobs` is writable by your webserver
-* Go to YOURLS `Manage Plugins` page and enable the plugin.
+* Copy or link the file `YOURLS/user/plugins/snapshot/assets/srv.php` into `YOURLS/pages/`
+* Create the directory `YOURLS/user/cache/` and make it writable by your webserver
+* Recursively make the folder `YOURLS/user/plugins/snapshot/screen/jobs` writable by your webserver
+* Go to the YOURLS `Manage Plugins` page and enable this plugin.
 * Go to the `Snapshot` page and follow the instructions there.
 
 ### Optional
 * configure a cron job to keep up on cache maintanence
 
 #### Notes 
-1. If you installed via apt and are planning on using the default settings, you *will* still have to make the folder `cache` in YOURLS root directory, and make sure that it is writable by your webserver.
-2. If you installed via binary, or some other method, make sure to take note of the location of the phantomjs binary.
-3. Please see the [TODO](https://github.com/joshp23/YOURLS-Snapshot/issues/1) list for future feature enhancements
+1. If you installed via binary, or some other method, make sure to take note of the location of the phantomjs binary.
+2. Please see the [TODO](https://github.com/joshp23/YOURLS-Snapshot/issues/1) list for future feature enhancements
 
 ## Credits
 OZH's original [preview](https://github.com/YOURLS/YOURLS/wiki/Plugin-%3D-Preview-URL) plugin was used as the original code base.
