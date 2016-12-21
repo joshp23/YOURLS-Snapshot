@@ -2,7 +2,7 @@
 /*	
  *	=======================================================================
  *
- *	U-SRV v 1.1.5
+ *	U-SRV v 1.1.6
  *		
  *	This is a universal file server (for YOURLS)
  *	by Josh Panter <joshu at unfettered dot net>
@@ -18,7 +18,7 @@
  *
  *	Given the following parameters:
  *
- *		1. pid => plugin ID
+ *		1. id => plugin ID
  *		2. fn  => filename
  *		3. key => Access key
  *	
@@ -58,10 +58,10 @@
 */
 
 // get plugin id or die
-if( isset($_GET['pid'])) {
-	$pid = $_GET['pid'];
+if( isset($_GET['id'])) {
+	$id = $_GET['id'];
 } else {
-	die('FAIL: missing plugin id');
+	die('FAIL: missing id');
 }
 
 // get file name or die
@@ -87,23 +87,23 @@ if( isset($_GET['key'])) {
  *	following to your plugin or script:
  *
  *		$now = date("YmdGi");
- *		$pid = 'My_Fancy_Plugin';
- *		$key = md5($now . $pid);
+ *		$id = 'My_Fancy_Plugin';
+ *		$key = md5($now . $id);
  *
- *	and make sure to send 'pid' => $pid and 'key' => $key
+ *	and make sure to send 'id' => $id and 'key' => $key
  *	from the above example.
  *
 */
 // check access key
 $now  = date("YmdGi");
-$lock = md5($now . $pid);
+$lock = md5($now . $id);
 if($lock !== $key) die('FAIL: bad access key');
 
 /*
  *
  * 	Plugin ID list: To add your plugin, just add a new case
  *	with your plugin ID and include your file store location. 
- *	Your PID can be whatever you wish, just send it in a GET
+ *	Your ID can be whatever you wish, just send it in a GET
  *	request with the KEY and file name.
  *
  *	Ex. In this example you store the cache location in the DB
@@ -121,7 +121,7 @@ if($lock !== $key) die('FAIL: bad access key');
  *
 */
 // get plugin file cache location
-switch ($pid) {
+switch ($id) {
 
 	case 'snapshot':
 		$path = yourls_get_option('snapshot_cache_path');
@@ -136,11 +136,12 @@ switch ($pid) {
 		
 	case 'iqrcodes':
 		$path = yourls_get_option('IQRCodes_cache_path');
+		if($path == null) $path = 'user/cache/qr';
 		$path = $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
 		break;
 		
 	default:
-		die('not a valid pid');
+		die('not a valid id');
 }
 
 // work with the file
