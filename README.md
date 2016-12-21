@@ -13,6 +13,7 @@ Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal U
 3. Highly configurable PhantomJS options dialogue, makes working with the application trivial.
 4. All options are configured in admin interface and stored in the databse, no file editing.
 5. Screen is included and ready to go, no setup required.
+6. Cache directory created and moved automatically, no manual file system manipulation required.
 
 #### Robust cache features: 
 1. Set cache expiration times for rendered preview images.
@@ -35,7 +36,6 @@ Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal U
   ```
 * Grab the [latest release](https://github.com/joshp23/YOURLS-Snapshot/releases/latest) and extract the `snapshot` folder into `YOURLS/user/plugins/`
 * Copy or link the file `YOURLS/user/plugins/snapshot/assets/srv.php` into `YOURLS/pages/`
-* Create the directory `YOURLS/user/cache/` and make it writable by your webserver
 * Recursively make the folder `YOURLS/user/plugins/snapshot/screen/jobs` writable by your webserver
 * Go to the YOURLS `Manage Plugins` page and enable this plugin.
 * Go to the `Snapshot` page and follow the instructions there.
@@ -45,7 +45,8 @@ Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal U
 
 #### Notes 
 1. If you installed via binary, or some other method, make sure to take note of the location of the phantomjs binary.
-2. Please see the [TODO](https://github.com/joshp23/YOURLS-Snapshot/issues/1) list for future feature enhancements
+2. Your webserver needs to have write permissions in order to make the cache directory. If you run into errors, try making the director and setting `chmod 0777` manually. 
+3. Please see the [TODO](https://github.com/joshp23/YOURLS-Snapshot/issues/1) list for future feature enhancements
 
 ## Credits
 OZH's original [preview](https://github.com/YOURLS/YOURLS/wiki/Plugin-%3D-Preview-URL) plugin was used as the original code base.

@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.0.1
+Version: 2.1.0
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -26,6 +26,9 @@ function snapshot_do_page() {
 	
 	// Get the options and set defaults if needed
 	$opt = snapshot_config();
+	
+	// Make sure cache exists
+	snapshot_cache_mkdir( $opt[10] );
 	
 	// Create nonce
 	$nonce = yourls_create_nonce( 'snapshot' );
@@ -148,7 +151,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							
 							<div style="padding-left: 10pt;">
 								<p>
-									<input type="text" size=20 id="snapshot_phantomjs_path" name="snapshot_phantomjs_path" value="$opt[2]" />
+									<input type="text" size=20 id="snapshot_phantomjs_path" name="snapshot_phantomjs_path" value="$opt[2]" /> <small>from root: include preceeding and trailing slashes</small>
 								</p>
 								<p><strong>Example:</strong> enter <code>/usr/bin/</code> if you find your binary at <code>/usr/bin/phantomjs</code> <small> This is the correct value if you installed phantomjs via apt in Ubuntu</small></p>
 								
@@ -219,8 +222,9 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 							
 							<div style="padding-left: 10pt;">
 								<p>
-									<input type="text" size=20 id="snapshot_cache_path" name="snapshot_cache_path" value="$opt[10]" /><small> This folder needs to be manually created, and must be writable by your webserver. ie <code>chmod 777</code></small>
+									<strong>/ </strong><input type="text" size=20 id="snapshot_cache_path" name="snapshot_cache_path" value="$opt[10]" /><strong>/</strong> <small> This must be relative to YOURLS root direcotry. Do not include a beginning or trailing slash. </small>
 								</p>
+								<p>In order for this folder to be automatically created and moved, your webserver needs write permissions on the parent folder. Otherwise, you will have to add it yourself with the correct permissions.</p>
 								<p>The default location is in the YOURLS user folder, ie <code>/path/to/www/YOURLS/user/cache/preview/</code></p>
 							</div>
 							
@@ -397,7 +401,24 @@ function snaphsot_form_1() {
 		if(isset($_POST['snapshot_clip_h'])) yourls_update_option( 'snapshot_clip_h', $_POST['snapshot_clip_h'] );
 		if(isset($_POST['snapshot_img_type'])) yourls_update_option( 'snapshot_img_type', $_POST['snapshot_img_type'] );
 		if(isset($_POST['snapshot_delay'])) yourls_update_option( 'snapshot_delay', $_POST['snapshot_delay'] );
-		if(isset($_POST['snapshot_cache_path'])) yourls_update_option( 'snapshot_cache_path', $_POST['snapshot_cache_path'] );
+		
+		// every submission resubmits all values, we just repost them without checking to save time. We check here, so that
+		// we can create the database if it was never created, or move it if it was moved.
+		if(isset($_POST['snapshot_cache_path']) ) {
+			$pcpath = $_POST['snapshot_cache_path'];
+			$ocpath = yourls_get_option( 'snapshot_cache_path' );
+			if ($pcpath !== $ocpath ) {
+				if ($ocpath == null ) {
+					snapshot_cache_mkdir( $pcpath );
+					yourls_update_option( 'snapshot_cache_path', $pcpath);
+				} else {
+				snapshot_cache_mvdir ( $ocpath , $pcpath );
+				yourls_update_option( 'snapshot_cache_path', $pcpath );
+				}
+			}
+		}
+		
+		// carry on with lazy value updating...
 		if(isset($_POST['snapshot_cache_expire'])) yourls_update_option( 'snapshot_cache_expire', $_POST['snapshot_cache_expire'] );
 		if(isset($_POST['snapshot_cache_expire_mod'])) yourls_update_option( 'snapshot_cache_expire_mod', $_POST['snapshot_cache_expire_mod'] );
 	}
@@ -707,4 +728,34 @@ function delete_snapshot_cache_img( $args ) {
     	
     	$target  = $dir . '/' . md5($keyword) . '.' . $opt[8];
 	if (file_exists($target)) unlink($target);
+}
+
+// Make dir if null
+function snapshot_cache_mkdir( $var ) {
+
+	$var = $_SERVER['DOCUMENT_ROOT'] . '/' . $var . '/';
+	if ( !file_exists( $var ) ) {
+		mkdir( $var );
+		chmod( $var, 0777 );
+	}
+	else
+		return;
+}
+
+// Move directory if option is updated
+function snapshot_cache_mvdir( $old , $new ) {
+
+	$old = $_SERVER['DOCUMENT_ROOT'] . '/' . $old . '/';
+	$new = $_SERVER['DOCUMENT_ROOT'] . '/' . $new . '/';
+	
+	if ( !file_exists( $old ) || $old == null ) {
+		snapshot_cache_mkdir( $new );
+	} else { 
+		if ( !file_exists( $new ) ) {
+			rename( $old , $new );
+			chmod( $new, 0777 );
+		}
+		else
+			return;
+	}
 }
