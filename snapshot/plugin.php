@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.1.0
+Version: 2.0.1
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -499,12 +499,12 @@ function snapshot_show( $keyword ) {
 		$s_ico 	= yourls_get_favicon_url( $base );
 		
 		// Build the querry
-		$pid 	= 'snapshot';
+		$id 	= 'snapshot';
 		$img 	= snapshot_request($keyword, $url);
 		
 		// Set up the fallback error
 		if($img == 'alt') {
-			$pid = 'snapshot-alt';
+			$id = 'snapshot-alt';
 			$img = array(
 				'sorry.png',
 				'420'
@@ -512,7 +512,7 @@ function snapshot_show( $keyword ) {
 		}
 		
 		$now 	= date("YmdGi");
-		$key 	= md5($now . $pid);
+		$key 	= md5($now . $id);
 		
 		// draw the preview page
 		require_once( YOURLS_INC.'/functions-html.php' );
@@ -523,7 +523,7 @@ function snapshot_show( $keyword ) {
 				<h3>"$title"</h3>
 				<p><img src="$s_ico" /> <strong><a href="$base/$keyword">$base/$keyword</a> &rArr;</strong> <img src="$l_ico" /> <strong><a href="$base/$keyword">$url</a></strong></p>
 				<div id="live_p">
-					<img border=1 src="$base/srv/?pid=$pid&key=$key&fn=$img[0]" width="$img[1]" />	
+					<img border=1 src="$base/srv/?id=$id&key=$key&fn=$img[0]" width="$img[1]" />	
 				</div>
 				<p>To visit this link, please <strong><a href="$base/$keyword">click here</a></strong>.</p>
 				<p>Thank you.</p>
