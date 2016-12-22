@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.1.2
+Version: 2.2.0
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
