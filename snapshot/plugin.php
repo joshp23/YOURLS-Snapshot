@@ -42,6 +42,14 @@ function snapshot_do_page() {
 		$is_jpg = null;
 	}
 	
+	$D_chk = $P_chk = null;
+	switch ($opt[13]) {
+		case 'preserve': $P_chk = 'checked'; break;
+		case 'delete':   $D_chk = 'checked'; break;
+		default:  	 $P_chk = 'checked'; break;
+	}
+	
+	// Just display bells and whistles
 	$url_convert = YOURLS_URL_CONVERT;
 	if( $url_convert == 62 ) {
 		$trigger_scope = "any <strong>non</strong> alphanumeric character";
@@ -245,6 +253,18 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 								<p>This can be helpful in case of frequent requests.</p>
 								
 							</div>
+													
+							<h4>Cache Fate</h4>
+						
+							<div style="padding-left: 10pt;">
+							
+								<div style="padding-left: 10pt;">					           		
+									<input type="hidden" name="snapshot_cache_fate" value="preserve">
+				  					<input type="radio" name="snapshot_cache_fate" value="preserve" $P_chk> Preserve<br>
+				  					<input type="radio" name="snapshot_cache_fate" value="delete" $D_chk> Delete<br>
+				  					<p>Decide what happens to the cache when the plugin is deactivated</p>
+			  					</div>
+		  					</div
 						</div>
 						
 						<input type="hidden" name="nonce" value="$nonce" />
@@ -344,6 +364,7 @@ function snapshot_config() {
 	$cache	 = yourls_get_option( 'snapshot_cache_path' );	
 	$cacheX	 = yourls_get_option( 'snapshot_cache_expire' );
 	$cacheXM = yourls_get_option( 'snapshot_cache_expire_mod' );
+	$c_fate  = yourls_get_option( 'snapshot_cache_fate' );
 	
 	// Set defaults if necessary
 	if( $char	== null ) $char 	= '~';
@@ -360,6 +381,7 @@ function snapshot_config() {
 	if( $cacheX	== null ) $cacheX 	= '1';
 	if( $cacheXM 	== null ) $cacheXM 	= 'hours';
 	if( $dwidth 	== null ) $dwidth 	= '560';
+	if( $c_fate	== null ) $c_fate	= 'preserve';
 	
 	return array(
 	$char,		// opt[0]
@@ -375,6 +397,7 @@ function snapshot_config() {
 	$cache,		// opt[10]
 	$cacheX	,	// opt[11]
 	$cacheXM,	// opt[12]
+	$c_fate		// opt[13]
 	);
 }
 
@@ -421,6 +444,7 @@ function snaphsot_form_1() {
 		// carry on with lazy value updating...
 		if(isset($_POST['snapshot_cache_expire'])) yourls_update_option( 'snapshot_cache_expire', $_POST['snapshot_cache_expire'] );
 		if(isset($_POST['snapshot_cache_expire_mod'])) yourls_update_option( 'snapshot_cache_expire_mod', $_POST['snapshot_cache_expire_mod'] );
+		if(isset($_POST['snapshot_cache_fate'])) yourls_update_option( 'snapshot_cache_fate', $_POST['snapshot_cache_fate'] );
 	}
 }
 
@@ -601,7 +625,10 @@ function snapshot_screen($keyword, $url) {
 }
 
 /*
-	CACHE FUNCTIONS
+ *
+ *	CACHE FUNCTIONS
+ *
+ *
 */
 // flush
 function snapshot_cache_flush($age) {
@@ -648,7 +675,9 @@ function snapshot_cache_flush_api() {
 		);
 	}
 }
-
+/*
+	Stats
+*/
 // get cache disk use data
 function snapshot_cache_stats() {
 
@@ -717,17 +746,15 @@ function snapshot_format_size($bytes){
 		return $bytes . ' B';
 	}
 }
+/*
+	Cache I/O
+*/
+// Craete cache on enable
+yourls_add_action('activated_snapshot/plugin.php', 'snapshot_activate');
+function snapshot_activate() {
 
-// Delete cached image on keyword delete
-yourls_add_action( 'delete_link', 'delete_snapshot_cache_img' );
-function delete_snapshot_cache_img( $args ) {
-	
-	$opt 	 = snapshot_config();
-	$dir 	 = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[10];
-    	$keyword = $args[0];
-    	
-    	$target  = $dir . '/' . md5($keyword) . '.' . $opt[8];
-	if (file_exists($target)) unlink($target);
+	$opt = snapshot_config();
+	snapshot_cache_mkdir( $opt[10] );
 }
 
 // Make dir if null
@@ -759,3 +786,34 @@ function snapshot_cache_mvdir( $old , $new ) {
 			return;
 	}
 }
+// Delete cached image on keyword delete
+yourls_add_action( 'delete_link', 'delete_snapshot_cache_img' );
+function delete_snapshot_cache_img( $args ) {
+	
+	$opt 	 = snapshot_config();
+	$dir 	 = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[10];
+    	$keyword = $args[0];
+    	
+    	$target  = $dir . '/' . md5($keyword) . '.' . $opt[8];
+	if (file_exists($target)) unlink($target);
+}
+
+// purge cache on disable
+yourls_add_action('deactivated_snapshot/plugin.php', 'snapshot_deactivate');
+function snapshot_deactivate() {
+
+	$opt = snapshot_config();
+	$dir = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[10] . '/';
+	
+	if($opt[13] == 'delete') {
+		if (file_exists($dir)) {
+			foreach (new DirectoryIterator($dir) as $fileInfo) {
+				if ($fileInfo->isDot()) {
+				continue;
+			    	}
+				unlink($fileInfo->getRealPath());
+			}
+		}
+	}
+}
+
