@@ -15,6 +15,9 @@ Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal U
 5. Screen is included and ready to go, no setup required.
 6. Cache directory created and moved automatically, no manual file system manipulation required.
 
+#### Simple integration
+Because of the U-SRV method of image serving, it is a snap to integrate Snapshot into other plugins. Currently the [Rscrub](https://github.com/joshp23/YOURLS-rscrub) and [Compliance](https://github.com/joshp23/YOURLS-Compliance) plugins utilize this feature.
+
 #### Robust cache features: 
 1. Set cache expiration times for rendered preview images.
 2. Easily monitor cache disk usage via the admin interface.
