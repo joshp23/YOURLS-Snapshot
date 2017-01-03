@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.2.0
+Version: 2.2.1
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -88,7 +88,7 @@ function snapshot_do_page() {
 						<p>Snapshot will look for a trailing chacter (or character pattern) to trigger the preview page.</p>
 						<p><strong>Example:</strong> <code>https://$me/V$opt[0]</code>  will trigger the preview for the short url "V", where <code>https://$me/V</code> is the usual path.</p>
 				
-						</p>You are using the <strong>base $url_convert</strong> character set to encode your short urls, so you can use $trigger_scope as the trigger character, the default is "<code>~</code>"</p>
+						<p>You are using the <strong>base $url_convert</strong> character set to encode your short urls, so you can use $trigger_scope as the trigger character, the default is "<code>~</code>"</p>
 						
 						<h3>Image Display Width</h3>
 						
@@ -264,7 +264,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 				  					<input type="radio" name="snapshot_cache_fate" value="delete" $D_chk> Delete<br>
 				  					<p>Decide what happens to the cache when the plugin is deactivated</p>
 			  					</div>
-		  					</div
+		  					</div>
 						</div>
 						
 						<input type="hidden" name="nonce" value="$nonce" />
@@ -276,7 +276,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 				
 					<h3>Status</h3>
 						
-					<p>Currently the cache consists of $cstat[1] files totaling $cstat[0], with $cstat[3] remaining on your $cstat[2] drive.
+					<p>Currently the cache consists of $cstat[1] files totaling $cstat[0], with $cstat[3] remaining on your $cstat[2] drive.</p>
 					
 					<h3>Flush Cache</h3>
 					<form method="post">
@@ -308,7 +308,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 						<li><code>action=cflush</code></li>
 					</ul>
 					
-					<p>This call will default to your Cache Expiration settings, currently: $opt[11] $opt[12].
+					<p>This call will default to your Cache Expiration settings, currently: $opt[11] $opt[12].</p>
 					<p>You can override the default with the following parameters:</p>
 					<ul>
 						<li><code>age=</code>VALUE</li>
@@ -322,7 +322,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 					</ul>
 					<p><strong>Example</strong>: You could send a GET request like so: <code>$myself/yourls-api.php?signature=$myKey&action=cflush&age=1&mod=weeks</code> in order to flush any images older than 1 week.</p>
 					
-					<p>Please refer to the <a href="$myself/readme.html#API" target="-blank" >API documentation</a> for more information on YOURLS API requests.</p>
+					<p>Please refer to the <a href="$myself/readme.html#API" target="_blank" >API documentation</a> for more information on YOURLS API requests.</p>
 					
 					<h3>Auto-Flush</h3>
 					
@@ -519,6 +519,7 @@ function snapshot_show( $keyword ) {
 		$title 	= yourls_get_keyword_title( $keyword );
 		$url   	= yourls_get_keyword_longurl( $keyword );
 		$base  	= YOURLS_SITE;
+		$shorturl = $base.'/'.$keyword;
 		$l_ico 	= yourls_get_favicon_url( $url );
 		$s_ico 	= yourls_get_favicon_url( $base );
 		
@@ -545,11 +546,11 @@ function snapshot_show( $keyword ) {
 		echo <<<HTML
 				<h2>Short Link &rArr; Long Link | Preview</h2>
 				<h3>"$title"</h3>
-				<p><img src="$s_ico" /> <strong><a href="$base/$keyword">$base/$keyword</a> &rArr;</strong> <img src="$l_ico" /> <strong><a href="$base/$keyword">$url</a></strong></p>
+				<p><img src="$s_ico" /> <strong><a href="$shorturl">$shorturl</a> &rArr;</strong> <img src="$l_ico" /> <strong><a href="$base/$keyword">$url</a></strong></p>
 				<div id="live_p">
 					<img border=1 src="$base/srv/?id=$id&key=$key&fn=$img[0]" width="$img[1]" />	
 				</div>
-				<p>To visit this link, please <strong><a href="$base/$keyword">click here</a></strong>.</p>
+				<p>To visit this link, please <strong><a href="$shorturl">click here</a></strong>.</p>
 				<p>Thank you.</p>
 HTML;
 		yourls_html_footer();
