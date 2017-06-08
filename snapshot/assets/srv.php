@@ -2,7 +2,7 @@
 /*	
  *	=======================================================================
  *
- *	U-SRV v 1.1.7
+ *	U-SRV v 1.1.9
  *		
  *	This is a universal file server (for YOURLS)
  *	by Josh Panter <joshu at unfettered dot net>
@@ -97,6 +97,9 @@ if( isset($_GET['key'])) {
 // check access key
 $now = round(time()/60);
 $lock = md5($now . $id);
+// set a cookie to help with javascript calls
+$cname = "usrv_" . $id;
+setcookie($cname,$now, 0, "/");
 if($lock !== $key) die('FAIL: bad access key');
 
 /*
@@ -135,7 +138,7 @@ switch ($id) {
 		break;
 		
 	case 'iqrcodes':
-		$path = yourls_get_option('IQRCodes_cache_path');
+		$path = yourls_get_option('IQRCodes_cache_loc');
 		if($path == null) $path = 'user/cache/qr';
 		$path = $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
 		break;
