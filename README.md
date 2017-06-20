@@ -1,8 +1,6 @@
 # YOURLS-Snapshot
 YOURLS URL preview plugin with image caching powered by PhantomJS
 
-by Josh Panter [Unfettered](https://unfettered.net)
-
 Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal URL shortener that uses the power of [PhantomJS](http://phantomjs.org/) headless web browser via the [Screen](https://github.com/microweber/screen) PHP library.
 
 ## Features & Function
@@ -28,14 +26,20 @@ Because of the U-SRV method of image serving, it is a snap to integrate Snapshot
 
 ## Requirements and Installation
 * Install and configure YOURLS
-* Install phantomjs (details [here](http://phantomjs.org/download.html))
-  * You can download the binary from the above link, or install via package manager
+* Install phantomjs: details and prebuilt binaries can be found [here](http://phantomjs.org/download.html)
+  * __NOTE:__ On Debian/Ubuntu there is a [known bug](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=808242) with upstream packaging. Installing the prebuilt binary is therefore reccomended. Ex:
   ```
-  $sudo apt-get install phantomjs
+  # cd /opt
+  # wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+  # tar xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
+  # rm phantomjs-2.1.1-linux-x86_64.tar.bz2
+  # ln -s /opt/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
+  # phantomjs --version
+  2.1.1
   ```
   * Install font requirements for phantomjs
   ```
-  $sudo apt-get install fontconfig freetype*
+  $ sudo apt-get install fontconfig freetype*
   ```
 * Grab the [latest release](https://github.com/joshp23/YOURLS-Snapshot/releases/latest) and extract the `snapshot` folder into `YOURLS/user/plugins/`
 * Copy or link the file `YOURLS/user/plugins/snapshot/assets/srv.php` into `YOURLS/pages/`
@@ -47,7 +51,7 @@ Because of the U-SRV method of image serving, it is a snap to integrate Snapshot
 * configure a cron job to keep up on cache maintanence
 
 #### Notes 
-1. If you installed via binary, or some other method, make sure to take note of the location of the phantomjs binary.
+1. If you installed via binary make sure totake note of the location of the phantomjs binary.
 2. Your webserver needs to have write permissions in order to make the cache directory. If you run into errors, try making the director and setting `chmod 0777` manually. 
 3. Please see the [TODO](https://github.com/joshp23/YOURLS-Snapshot/issues/1) list for future feature enhancements
 
