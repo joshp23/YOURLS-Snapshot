@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.2.2
+Version: 2.3.0
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -49,6 +49,11 @@ function snapshot_do_page() {
 		default:  	 $P_chk = 'checked'; break;
 	}
 	
+	if ($opt[14] !== 'no') {
+		$log_chk = 'checked';
+		} else {
+		$log_chk = null;
+		}
 	// Just display bells and whistles
 	$url_convert = YOURLS_URL_CONVERT;
 	if( $url_convert == 62 ) {
@@ -174,7 +179,15 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 								<p>Defines the timeout after which any resource requested will stop trying and proceed with other parts of the page.</p>
 								<p><strong>Example:</strong> <code>3000</code> will timeout at 3 seconds.</p>
 							</div>
-						</div>
+
+							<h4>Error Reporting:</h4>
+							<div class="checkbox">
+							  <label>
+							    <input name="snapshot_err_log" type="hidden" value="no" >
+							    <input name="snapshot_err_log" type="checkbox" value="yes" $log_chk> Save errors to a log file in the Snapshot plugin directory.
+							  </label>
+							</div>
+							</div>
 						<hr>
 						<h3>Image Settings</h3>
 						 
@@ -365,6 +378,7 @@ function snapshot_config() {
 	$cacheX	 = yourls_get_option( 'snapshot_cache_expire' );
 	$cacheXM = yourls_get_option( 'snapshot_cache_expire_mod' );
 	$c_fate  = yourls_get_option( 'snapshot_cache_fate' );
+	$e_log	 = yourls_get_option( 'snapshot_err_log' );
 	
 	// Set defaults if necessary
 	if( $char	== null ) $char 	= '~';
@@ -382,6 +396,7 @@ function snapshot_config() {
 	if( $cacheXM 	== null ) $cacheXM 	= 'hours';
 	if( $dwidth 	== null ) $dwidth 	= '560';
 	if( $c_fate	== null ) $c_fate	= 'preserve';
+	if( $e_log	== null ) $e_log	= 'true';
 	
 	return array(
 	$char,		// opt[0]
@@ -397,7 +412,8 @@ function snapshot_config() {
 	$cache,		// opt[10]
 	$cacheX	,	// opt[11]
 	$cacheXM,	// opt[12]
-	$c_fate		// opt[13]
+	$c_fate,	// opt[13]
+	$e_log		// opt[14]
 	);
 }
 
@@ -445,6 +461,7 @@ function snaphsot_form_1() {
 		if(isset($_POST['snapshot_cache_expire'])) yourls_update_option( 'snapshot_cache_expire', $_POST['snapshot_cache_expire'] );
 		if(isset($_POST['snapshot_cache_expire_mod'])) yourls_update_option( 'snapshot_cache_expire_mod', $_POST['snapshot_cache_expire_mod'] );
 		if(isset($_POST['snapshot_cache_fate'])) yourls_update_option( 'snapshot_cache_fate', $_POST['snapshot_cache_fate'] );
+		if(isset($_POST['snapshot_err_log'])) yourls_update_option( 'snapshot_err_log', $_POST['snapshot_err_log'] );
 	}
 }
 
@@ -620,7 +637,11 @@ function snapshot_screen($keyword, $url) {
 			$file,
 			$opt[1]
 		);
-	} catch (Exception $e) { 
+	} catch (Exception $e) {
+		if($opt[14] !== 'no') {
+			$me = $_SERVER['DOCUMENT_ROOT'] .'user/plugins/snapshot/';
+			file_put_contents($me . "errors.txt", "# NEW ERROR RECORD START: " . date('Y-m-d H:i:s') . PHP_EOL . "# KEYWORD: " . $keyword . PHP_EOL . "# URL: " . $url . PHP_EOL . "#" . PHP_EOL . $e . PHP_EOL . "#" . PHP_EOL, FILE_APPEND);
+		}
 		return 'alt';
 	}	
 }
@@ -817,4 +838,3 @@ function snapshot_deactivate() {
 		}
 	}
 }
-

@@ -54,6 +54,7 @@ Because of the U-SRV method of image serving, it is a snap to integrate Snapshot
 1. If you installed via binary make sure totake note of the location of the phantomjs binary.
 2. Your webserver needs to have write permissions in order to make the cache directory. If you run into errors, try making the director and setting `chmod 0777` manually. 
 3. Please see the [TODO](https://github.com/joshp23/YOURLS-Snapshot/issues/1) list for future feature enhancements
+4. By default Snapshot will keep an error log in its own directory provided permissions are correctly set. This behavior can be disabled in the admin section.
 
 ## Credits
 OZH's original [preview](https://github.com/YOURLS/YOURLS/wiki/Plugin-%3D-Preview-URL) plugin was used as the original code base.
@@ -66,7 +67,7 @@ This plugin is offered "as is", and may or may not work for you. Give it a try, 
 
 ===========================
 
-    Copyright (C) 2016 Josh Panter
+    Copyright (C) 2016 - 2017 Josh Panter
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
