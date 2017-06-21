@@ -6,23 +6,29 @@ Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal U
 ## Features & Function
 
 #### Easy Configuration
-1. Just append your short URL with a '~', or choose a custom character from the admin interface to trigger a preview.
-2. Clear instructions: Includes detailed, personalized instruction for setting up a subdomain service, and more.
-3. Highly configurable PhantomJS options dialogue, makes working with the application trivial.
-4. All options are configured in admin interface and stored in the databse, no file editing.
-5. Screen is included and ready to go, no setup required.
-6. Cache directory created and moved automatically, no manual file system manipulation required.
+- Just append your short URL with a '~', or choose a custom character from the admin interface to trigger a preview.
+- Clear, detailed, personalized instructions included for setting up a subdomain service, and more.
+- Highly configurable PhantomJS options dialogue, makes working with the application trivial.
+- All options are easily configured in admin interface and stored in the databse, no file editing.
+- Screen is included and ready to go, no setup required.
+- Cache directory created and moved automatically, no manual file system manipulation required.
 
-#### Simple integration
+#### Simple integration into other plugins
 Because of the U-SRV method of image serving, it is a snap to integrate Snapshot into other plugins. Currently the [Rscrub](https://github.com/joshp23/YOURLS-rscrub) and [Compliance](https://github.com/joshp23/YOURLS-Compliance) plugins utilize this feature.
 
+#### Seamless, out-of-the-box integration with other plugins
+- If [Phishtank-2.0](https://github.com/joshp23/YOURLS-Phishtank-2.0) is installed, the previewed url will be (re)checked against the [Phishtank API](https://www.phishtank.com/)
+    - If there is a hit, a very visible warning is displayed 
+    - Otherwise the Phistank logo and a friendly message is displayed below the image
+- If [Compliance](https://github.com/joshp23/YOURLS-Compliance) is installed, a small link and message under the preview image is displayed for potentially bad links.
+
 #### Robust cache features: 
-1. Set cache expiration times for rendered preview images.
-2. Easily monitor cache disk usage via the admin interface.
-3. Manual cache flush with granular configuration options.
-4. Custom API for cache flushing.
-5. Personalized cron example included for use with API, keep the cahce in check with a configurable auto-flush.
-6. Self-cleaning: Cached images are deleted when a keyword is removed from database.
+- Set cache expiration times for rendered preview images.
+- Easily monitor cache disk usage via the admin interface.
+- Manual cache flush with granular configuration options.
+- Custom API for cache flushing.
+- Personalized cron example included for use with API, keep the cahce in check with a configurable auto-flush.
+- Self-cleaning: Cached images are deleted when a keyword is removed from database.
 
 ## Requirements and Installation
 * Install and configure YOURLS
@@ -41,7 +47,7 @@ Because of the U-SRV method of image serving, it is a snap to integrate Snapshot
   ```
   $ sudo apt-get install fontconfig freetype*
   ```
-* Grab the [latest release](https://github.com/joshp23/YOURLS-Snapshot/releases/latest) and extract the `snapshot` folder into `YOURLS/user/plugins/`
+* Grab Snapshot's [latest release](https://github.com/joshp23/YOURLS-Snapshot/releases/latest) and extract the `snapshot` folder into `YOURLS/user/plugins/`
 * Copy or link the file `YOURLS/user/plugins/snapshot/assets/srv.php` into `YOURLS/pages/`
 * Recursively make the folder `YOURLS/user/plugins/snapshot/screen/jobs` writable by your webserver
 * Go to the YOURLS `Manage Plugins` page and enable this plugin.

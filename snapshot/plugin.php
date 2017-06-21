@@ -2,8 +2,8 @@
 /*
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
-Description: Preview plugin with an image Cahche
-Version: 2.3.0
+Description: Preview plugin with an image cache
+Version: 2.4.0
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -534,7 +534,26 @@ function snapshot_show( $keyword ) {
 	
 		// set variables for the page draw
 		$title 	= yourls_get_keyword_title( $keyword );
+		// truncate title
+		if(strlen($title) > 70) {
+			$title = substr($title, 0, 70);
+			if(false !== ($breakpoint = strrpos($title, " "))) {
+				$title = substr($title, 0, $breakpoint);
+			}
+			$title = $title . "...";
+		}
+
 		$url   	= yourls_get_keyword_longurl( $keyword );
+		// truncate long url for display
+		if(strlen($url) > 50) {
+			$url_ = substr($url, 0, 50);
+			if(false !== ($breakpoint = strrpos($url, " "))) {
+				$url_ = substr($url, 0, $breakpoint);
+			}
+			$url_ = $url_ . "...";
+		} else {
+			$url_ = $url;
+		}
 		$base  	= YOURLS_SITE;
 		$shorturl = $base.'/'.$keyword;
 		$l_ico 	= yourls_get_favicon_url( $url );
@@ -555,21 +574,67 @@ function snapshot_show( $keyword ) {
 		
 		$now = round(time()/60);
 		$key = md5($now . $id);
-		
+
 		// draw the preview page
 		require_once( YOURLS_INC.'/functions-html.php' );
 		yourls_html_head( 'preview', 'Short URL preview' );
 		yourls_html_logo();
 		echo <<<HTML
-				<h2>Short Link &rArr; Long Link | Preview</h2>
-				<h3>"$title"</h3>
-				<p><img src="$s_ico" /> <strong><a href="$shorturl">$shorturl</a> &rArr;</strong> <img src="$l_ico" /> <strong><a href="$base/$keyword">$url</a></strong></p>
-				<div id="live_p">
-					<img border=1 src="$base/srv/?id=$id&key=$key&fn=$img[0]" width="$img[1]" />	
-				</div>
-				<p>To visit this link, please <strong><a href="$shorturl">click here</a></strong>.</p>
-				<p>Thank you.</p>
+			<h2>Short Link &rArr; Long Link | Preview</h2>
+			<h3 style="width: 80%; overflow: hidden;">"$title"</h3>
+			<p><img src="$s_ico" /> <strong><a href="$shorturl">$shorturl</a> &rArr;</strong> <img src="$l_ico" /> <strong><a href="$base/$keyword">$url_</a></strong></p>
 HTML;
+		// Phishtank integration
+		if((yourls_is_active_plugin('phishtank-2.0/plugin.php')) !== false) {
+			// Is something phishy?
+			$phishy = phishtank_is_blacklisted( $url );
+			if($phishy == true) {
+				// Something IS phishy around here!
+				echo <<<HTML
+					<div id="live_p">
+						<h2 style="text-align:center; color:red">Warning!</h2>
+						<img src="https://www.phishtank.com/images/logo.gif">
+						<p style="text-align:center; color:red">Steer Clear! This link has failed a check against the <a href="https://www.phishtank.com" target="_blank">Phishtank</a> anti-phishing service.</p>
+					</div>
+HTML;
+			}
+
+		}
+		// Normal Snapshot preview data
+		echo <<<HTML
+			<div id="live_p">
+				<img border=1 src="$base/srv/?id=$id&key=$key&fn=$img[0]" width="$img[1]" />	
+			</div>
+			<br>
+			<p style="text-align:center;"><strong><a href="$shorturl">Click here</a></strong> to visit this link. Thank you.</p>
+HTML;
+		// Phishtank integration
+		if((yourls_is_active_plugin('phishtank-2.0/plugin.php')) !== false) {
+			// Is something phishy?
+			if($phishy == true) {
+				// We smell a phish...
+				echo <<<HTML
+					<hr><br>
+					<div>
+						<h2 style="text-align:center; color:red">DO NOT VISIT THIS SITE!</h2>
+					</div>
+HTML;
+			} else {
+				// Nothing Phishy about this...
+				echo <<<HTML
+					<div id="live_p">
+						<img src="https://www.phishtank.com/images/logo.gif">
+						<p style="text-align:center;">Click with confidence. This service protects users by checking all links with <a href="https://www.phishtank.com" target="_blank">Phishtank</a> anti-phishing service.</p>
+					</div>
+HTML;
+			}
+		}
+		// Compliance integration
+		if((yourls_is_active_plugin('compliance/plugin.php')) !== false) {
+			echo <<<HTML
+				<p style="text-align:center;"> If you find this link to be problematic you may file an abuse report by clicking <a href="$base/abuse">here</a>.</p>
+HTML;
+		}
 		yourls_html_footer();
 		
 	// If the keyword is not in the database, return to index
