@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image cache
-Version: 2.4.0
+Version: 2.5.0
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -632,7 +632,7 @@ HTML;
 		// Compliance integration
 		if((yourls_is_active_plugin('compliance/plugin.php')) !== false) {
 			echo <<<HTML
-				<p style="text-align:center;"> If you find this link to be problematic you may file an abuse report by clicking <a href="$base/abuse">here</a>.</p>
+				<p style="text-align:center;"> If you find this link to be problematic you may file an abuse report by clicking <a href="$base/abuse?action=autofill&alias=$keyword&reason=Snapshot abuse alert:">here</a>.</p>
 HTML;
 		}
 		yourls_html_footer();
