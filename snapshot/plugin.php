@@ -2,12 +2,11 @@
 /*
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
-Description: Preview plugin with an image cache
-Version: 2.5.0
+Description: Preview plugin with an image Cahche
+Version: 2.5.1
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
-
 // No direct call
 if( !defined( 'YOURLS_ABSPATH' ) ) die();
 
@@ -51,9 +50,9 @@ function snapshot_do_page() {
 	
 	if ($opt[14] !== 'no') {
 		$log_chk = 'checked';
-		} else {
+	} else {
 		$log_chk = null;
-		}
+	}
 	// Just display bells and whistles
 	$url_convert = YOURLS_URL_CONVERT;
 	if( $url_convert == 62 ) {
@@ -381,22 +380,22 @@ function snapshot_config() {
 	$e_log	 = yourls_get_option( 'snapshot_err_log' );
 	
 	// Set defaults if necessary
-	if( $char	== null ) $char 	= '~';
+	if( $char		== null ) $char 	= '~';
 	if( $dwidth 	== null ) $dwidth 	= '560';
 	if( $binPath 	== null ) $binPath 	= '/usr/bin/';
 	if( $timeOut 	== null ) $timeOut 	= '3000';		// 3 seconds
-	if( $img_w 	== null ) $img_w 	= '800';
-	if( $img_h 	== null ) $img_h 	= '640';
-	if( $clip_w	== null ) $clip_w 	= '800';
+	if( $img_w 		== null ) $img_w 	= '800';
+	if( $img_h 		== null ) $img_h 	= '640';
+	if( $clip_w		== null ) $clip_w 	= '800';
 	if( $clip_h  	== null ) $clip_h 	= '640';
 	if( $imgType 	== null ) $imgType 	= 'jpg';
-	if( $delay	== null ) $delay 	= '1500';		// 1.5 seconds
-	if( $cache 	== null ) $cache 	= 'user/cache/preview';
-	if( $cacheX	== null ) $cacheX 	= '1';
+	if( $delay		== null ) $delay 	= '1500';		// 1.5 seconds
+	if( $cache 		== null ) $cache 	= 'user/cache/preview';
+	if( $cacheX		== null ) $cacheX 	= '1';
 	if( $cacheXM 	== null ) $cacheXM 	= 'hours';
 	if( $dwidth 	== null ) $dwidth 	= '560';
-	if( $c_fate	== null ) $c_fate	= 'preserve';
-	if( $e_log	== null ) $e_log	= 'true';
+	if( $c_fate		== null ) $c_fate	= 'preserve';
+	if( $e_log		== null ) $e_log	= 'true';
 	
 	return array(
 	$char,		// opt[0]
@@ -704,7 +703,7 @@ function snapshot_screen($keyword, $url) {
 		);
 	} catch (Exception $e) {
 		if($opt[14] !== 'no') {
-			$me = $_SERVER['DOCUMENT_ROOT'] .'user/plugins/snapshot/';
+			$me = YOURLS_ABSPATH .'user/plugins/snapshot/';
 			file_put_contents($me . "errors.txt", "# NEW ERROR RECORD START: " . date('Y-m-d H:i:s') . PHP_EOL . "# KEYWORD: " . $keyword . PHP_EOL . "# URL: " . $url . PHP_EOL . "#" . PHP_EOL . $e . PHP_EOL . "#" . PHP_EOL, FILE_APPEND);
 		}
 		return 'alt';
@@ -722,7 +721,7 @@ function snapshot_cache_flush($age) {
 
 	$cache	 = yourls_get_option( 'snapshot_cache_path' );
 	if( $cache 	 == null ) $cache 	= 'user/cache/preview';
-	$dir = $_SERVER['DOCUMENT_ROOT'] . '/' . $cache;
+	$dir = YOURLS_ABSPATH . '/' . $cache;
 	$now = time();
 	
 	if (file_exists($dir)) {
@@ -770,7 +769,7 @@ function snapshot_cache_stats() {
 
 	$cache = yourls_get_option( 'snapshot_cache_path' );
 	if( $cache == null ) $cache = 'user/cache/preview';
-	$dir   = $_SERVER['DOCUMENT_ROOT'] . '/' . $cache;
+	$dir   = YOURLS_ABSPATH . '/' . $cache;
 	
 	$size	= snapshot_cache_size($dir);
 	$pop	= snapshot_cache_pop($dir);
@@ -847,7 +846,7 @@ function snapshot_activate() {
 // Make dir if null
 function snapshot_cache_mkdir( $var ) {
 
-	$var = $_SERVER['DOCUMENT_ROOT'] . '/' . $var . '/';
+	$var = YOURLS_ABSPATH . '/' . $var . '/';
 	if ( !file_exists( $var ) ) {
 		mkdir( $var );
 		chmod( $var, 0777 );
@@ -859,8 +858,8 @@ function snapshot_cache_mkdir( $var ) {
 // Move directory if option is updated
 function snapshot_cache_mvdir( $old , $new ) {
 
-	$old = $_SERVER['DOCUMENT_ROOT'] . '/' . $old . '/';
-	$new = $_SERVER['DOCUMENT_ROOT'] . '/' . $new . '/';
+	$old = YOURLS_ABSPATH . '/' . $old . '/';
+	$new = YOURLS_ABSPATH . '/' . $new . '/';
 	
 	if ( !file_exists( $old ) || $old == null ) {
 		snapshot_cache_mkdir( $new );
@@ -878,7 +877,7 @@ yourls_add_action( 'delete_link', 'delete_snapshot_cache_img' );
 function delete_snapshot_cache_img( $args ) {
 	
 	$opt 	 = snapshot_config();
-	$dir 	 = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[10];
+	$dir 	 = YOURLS_ABSPATH . '/' . $opt[10];
     	$keyword = $args[0];
     	
     	$target  = $dir . '/' . md5($keyword) . '.' . $opt[8];
@@ -890,7 +889,7 @@ yourls_add_action('deactivated_snapshot/plugin.php', 'snapshot_deactivate');
 function snapshot_deactivate() {
 
 	$opt = snapshot_config();
-	$dir = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[10] . '/';
+	$dir = YOURLS_ABSPATH . '/' . $opt[10] . '/';
 	
 	if($opt[13] == 'delete') {
 		if (file_exists($dir)) {
