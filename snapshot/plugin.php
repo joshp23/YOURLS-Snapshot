@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.5.1
+Version: 2.5.2
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -848,13 +848,15 @@ function snapshot_cache_mkdir( $var ) {
 
 	$var = YOURLS_ABSPATH . '/' . $var . '/';
 	if ( !file_exists( $var ) ) {
-		mkdir( $var );
-		chmod( $var, 0777 );
+		if ( mkdir( $var ) ) {
+			chmod( $var, 0777 );
+		} else {
+			echo "<b>Error: Snapshot Cache not created. Check persmissions and re-enable this plugin or create it manually.</b>";
+		}
 	}
 	else
 		return;
 }
-
 // Move directory if option is updated
 function snapshot_cache_mvdir( $old , $new ) {
 
