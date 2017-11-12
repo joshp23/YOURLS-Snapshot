@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.5.2
+Version: 2.5.3
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -679,7 +679,7 @@ function snapshot_screen($keyword, $url) {
 	$opt  = snapshot_config();
 	$file = md5($keyword) . '.' . $opt[8];
 	
-	require_once( 'screen/autoload.php');
+	require_once( 'assets/screen/autoload.php');
 
 	$screenCapture = new Screen\Capture($url);
 	$screenCapture->binPath = ($opt[2]);
