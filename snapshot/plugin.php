@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.5.4
+Version: 2.5.5
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -355,8 +355,15 @@ yourls_add_action('html_head', 'img_css');
 function img_css(){
 	$img_css = file_get_contents( dirname( __FILE__ ) . '/assets/preview.css');
 	echo '<style>' . $img_css . '</style>';
-	echo '<link rel="stylesheet" href="/css/infos.css" type="text/css" media="screen" />';
-	echo '<script src="/js/infos.js" type="text/javascript"></script>';
+	if ( YOURLS_JP23_HEAD_FILES == false || YOURLS_JP23_HEAD_FILES == null ) {
+
+		define( 'YOURLS_JP23_HEAD_FILES', true );
+
+		echo "\n<! --------------------------JP23_HEAD_FILES Start-------------------------- >\n";
+		echo "<link rel=\"stylesheet\" href=\"/css/infos.css\" type=\"text/css\" media=\"screen\" />\n";
+		echo "<script src=\"/js/infos.js\" type=\"text/javascript\"></script>\n";
+		echo "<! --------------------------JP23_HEAD_FILES END---------------------------- >\n";
+	}
 }
 
 // Get options and set defaults
