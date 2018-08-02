@@ -355,7 +355,7 @@ yourls_add_action('html_head', 'img_css');
 function img_css(){
 	$img_css = file_get_contents( dirname( __FILE__ ) . '/assets/preview.css');
 	echo '<style>' . $img_css . '</style>';
-	if ( YOURLS_JP23_HEAD_FILES == false || YOURLS_JP23_HEAD_FILES == null ) {
+	if ( YOURLS_JP23_HEAD_FILES !== true ) {
 
 		define( 'YOURLS_JP23_HEAD_FILES', true );
 
