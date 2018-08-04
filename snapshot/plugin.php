@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.5.6
+Version: 2.5.7
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -65,7 +65,7 @@ function snapshot_do_page() {
 	$me_parts = explode('.', $me);
 		$me_0 = $me_parts[0];
 		$me_1 = $me_parts[1];
-	$myself   = yourls_site_url();
+	$myself   = YOURLS_SITE;
 	$myKey    = yourls_auth_signature();
 	$cronEX   =  rawurlencode('<html><body><pre>0 0 * * 0 wget -O - -q -t 1 "<strong>' . $myself . '</strong>/yourls-api.php" --post-data "signature=?<strong>'. $myKey .'</strong>&action=cflush&age=3&mod=weeks" >/dev/null 2>&1</pre></body></html>');
 	$cstat 	  = snapshot_cache_stats();
@@ -355,10 +355,10 @@ yourls_add_action('html_head', 'refetch_head');
 function refetch_head(){
 	if ( YOURLS_JP23_HEAD_FILES == null ) {
 		define( 'YOURLS_JP23_HEAD_FILES', true );
-
+		$home = YOURLS_SITE;
 		echo "\n<! --------------------------JP23_HEAD_FILES Start-------------------------- >\n";
-		echo "<link rel=\"stylesheet\" href=\"".yourls_site_url()."/css/infos.css?v=".YOURLS_VERSION."\" type=\"text/css\" media=\"screen\" />\n";
-		echo "<script src=\"".yourls_site_url()."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
+		echo "<link rel=\"stylesheet\" href=\"".$home()."/css/infos.css?v=".YOURLS_VERSION."\" type=\"text/css\" media=\"screen\" />\n";
+		echo "<script src=\"".$home()."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
 		echo "<! --------------------------JP23_HEAD_FILES END---------------------------- >\n";
 	}
 	$loc = yourls_plugin_url(dirname(__FILE__));
@@ -562,7 +562,7 @@ function snapshot_show( $keyword ) {
 		} else {
 			$url_ = $url;
 		}
-		$base  	= yourls_site_url();
+		$base  	= YOURLS_SITE;
 		$shorturl = $base.'/'.$keyword;
 		$l_ico 	= yourls_get_favicon_url( $url );
 		$s_ico 	= yourls_get_favicon_url( $base );
