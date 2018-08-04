@@ -351,10 +351,8 @@ HTML;
 }
 
 // CSS for YOURLS style preview page and plugin config
-yourls_add_action('html_head', 'img_css');
-function img_css(){
-	$img_css = file_get_contents( dirname( __FILE__ ) . '/assets/preview.css');
-	echo '<style>' . $img_css . '</style>';
+yourls_add_action('html_head', 'refetch_head');
+function refetch_head(){
 	if ( YOURLS_JP23_HEAD_FILES == null ) {
 		define( 'YOURLS_JP23_HEAD_FILES', true );
 
@@ -363,6 +361,11 @@ function img_css(){
 		echo "<script src=\"".yourls_site_url()."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
 		echo "<! --------------------------JP23_HEAD_FILES END---------------------------- >\n";
 	}
+	$loc = yourls_plugin_url(dirname(__FILE__));
+	$file = dirname( __FILE__ )."/plugin.php";
+	$data = yourls_get_plugin_data( $file );
+	$v = $data['Version'];
+	echo "<! ---snapshot--- ><link rel=\"stylesheet\" href=\"".$loc."/assets/preview.css?v=".$v."\" type=\"text/css\" />\n";
 }
 
 // Get options and set defaults
