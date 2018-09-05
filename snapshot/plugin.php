@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 2.5.7
+Version: 3.0.0
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -76,8 +76,9 @@ function snapshot_do_page() {
 				<div class="wrap_unfloat">
 					<ul id="headers" class="toggle_display stat_tab">
 						<li class="selected"><a href="#stat_tab_behavior"><h2>Snapshot Config</h2></a></li>
-						<li><a href="#stat_tab_screen"><h2>Screen\PhantomJS Settings</h2></a></li>
-						<li><a href="#stat_tab_cache"><h2>Cache</h2></a></li>
+						<li><a href="#stat_tab_screen"><h2>Screen/PhantomJS Config</h2></a></li>
+						<li><a href="#stat_tab_cache"><h2>Cache Mgmt</h2></a></li>
+						<li><a href="#stat_tab_infos"><h2>Examples</h2></a></li>
 					</ul>
 				</div>
 
@@ -101,54 +102,83 @@ function snapshot_do_page() {
 						</p>
 						
 						<p>Set the display width for the image preview here. This is differnet than the settings in the next section, which have to do with file size/resolution and virtual screen capture size.</p>
+
+						<hr>
+
+						<h3>Cache Settings</h3>
+						
+						<div style="padding-left: 10pt;">
+						
+							<h4>U-SRV Checks</h4>
+							<p>Plugin: 
+HTML;
+	if(!(yourls_is_active_plugin('usrv/plugin.php'))) {
+		echo '<span style="font-weight:bold;color:red;">Missing!</span>This plugin depends on the <a href="https://github.com/joshp23/YOURLS-U-SRV" target="_blank">U-SRV</a> plugin, download and activate it before using this plugin.</p>';
+	} else {
+		echo '<span style="color:green;">Success</span>: U-SRV is installed and enabled.</p>';
+		echo '<p><code>srv.php</code> satus: ';
+
+		$srvLoc = YOURLS_ABSPATH.'/pages/srv.php';
+		if ( !file_exists( $srvLoc ) ) {
+	 		echo '<font color="red">srv.php is not in the "pages" directory!</font>';
+		} else { 
+			$pluginData = yourls_get_plugin_data( YOURLS_ABSPATH.'/user/plugins/usrv/plugin.php' );
+			$pluginVers = $pluginData['Version'];
+			$srvData = yourls_get_plugin_data( $srvLoc );
+			$servVers = $srvData['Version'];
+			$status = version_compare($pluginVers, $servVers);
+			switch ($status) {
+				case 1: echo '<font color="red">ERROR</font>: installed version in "pages" directory is outdated.'; break;
+				case 0: echo '<font color="green">Success</font>: installed and up to date.</font>'; break;
+				case -1: echo '<font color="blue">Dev</font>: installed and newer than plugin.</font>'; break;
+				default: echo '<font color="red">ERROR</font>: No info available, please check your installation';
+			}
+		}
+	}
+	echo <<<HTML
+							<h4>Location</h4>
+							
+							<div style="padding-left: 10pt;">
+								<p><input type="text" size=20 id="snapshot_cache_path" name="snapshot_cache_path" value="$opt[10]" /></p>
+								<p>Name the cache folder here, do not include a preceeding or trailing slash.</p>
+								<p>Current full path: <code>$opt[15]</code></p>
+								<p><small>Hint:Change the parent cache location in the U-SRV settings.</small></p>
+							</div>
+							
+							<h4>Expiration</h4>
+							
+							<div style="padding-left: 10pt;">
+								<p>
+									Replace an image when it is older than 
+									<input type="text" size=4 id="snapshot_cache_expire" name="snapshot_cache_expire" value="$opt[11]" />
+									<select name="snapshot_cache_expire_mod">
+										<option value="$opt[12]" selected >Select One</option>
+										<option value="min">Minutes</option>
+										<option value="hours">Hours</option>
+										<option value="days">Days</option>
+										<option value="weeks">Weeks</option>
+									</select> <small> Currently $opt[12]</small>.
+								</p>
+								<p>This can be helpful in case of frequent requests.</p>
+								
+							</div>
+													
+							<h4>Cache Fate</h4>
+						
+							<div style="padding-left: 10pt;">
+							
+								<div style="padding-left: 10pt;">					           		
+									<input type="hidden" name="snapshot_cache_fate" value="preserve">
+				  					<input type="radio" name="snapshot_cache_fate" value="preserve" $P_chk> Preserve<br>
+				  					<input type="radio" name="snapshot_cache_fate" value="delete" $D_chk> Delete<br>
+				  					<p>Decide what happens to the cache when the plugin is deactivated</p>
+			  					</div>
+		  					</div>
+						</div>
+						<hr>
 						<input type="hidden" name="nonce" value="$nonce" />
 						<p><input type="submit" value="Submit" /></p>
 					</form>
-					<hr>
-					<h3>Subdomain example</h3>
-					
-					<p>This explains how to configure an Apache web server to use a subdomain, such as <code>https://preview.$me</code> instead of <code>https://$me/V$opt[0]</code> to display your preview pages.</p>
-					
-					<h4>Part one: The virtual host</h4>
-					
-					<p>To use a subdomain for previews, we first need to add it in to the YOURLS virtual host conf file in Apache using the <code>ServerAlias</code> directive. Your conf file should look something like the following; notice that we are making use of the subdomain "<code>preview</code>".</p>
-<pre>
-&#60;VirtualHost *:80&#62;
-
-	ServerName $me
-	<strong>ServerAlias preview.$me</strong>
-	
-	DocumentRoot /var/www/YOURLS/
-	&#60;Directory /var/www/YOURLS/&#62;
-		Options -Indexes +FollowSymLinks +MultiViews
-		AllowOverride All
-		Order allow,deny
-		allow from all
-	&#60;/Directory&#62;
-
-	# Possible values include: debug, info, notice, warn, error, crit,
-	# alert, emerg.
-	LogLevel info
-	ErrorLog /var/log/apache2/error.log
-	CustomLog /var/log/apache2/access.log combined
-	
-&#60;/VirtualHost&#62;
-</pre>
-					<p>You might find your Apache default virtual host config file at <code>/etc/apache2/sites-available/000-default.conf</code>.</p>
-					<p>Once you have made your adjustments make sure to save the file and restart Apache.</p>
-					
-					<h4>Part Two: YOURLS .htaccess file</h4>
-					
-					<p>The following rules need to be added in to the very top of the YOURLS .htaccess file. They make use of both <code>mod_rewrite</code> and <code>mod_proxy</code>, so both of these modules need to be enabled on your server.
-<pre>
-RewriteEngine On
-
-# SNAPSHOT - PREVIEW
-RewriteCond %{HTTP_HOST} ^<strong>preview</strong>\.(<strong>$me_0</strong>\.<strong>$me_1</strong>)$ [NC]
-RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
-</pre>
-				<p>These rules have been generated using this site's current configuration. Any changes to your setup will necessitate an alteration of these rules in your system.</p>
-				<p><strong>NOTE:</strong> If you are using SSL on your site, make certain to set <code>SSLProxyEngine on</code> in your virtual host, otherwise these proxies will fail. Else, you will have to adjust the above code accordingly.</p>
 				</div>
 
 				<div id="stat_tab_screen" class="tab">
@@ -230,55 +260,9 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 								</p>
 								<p>Amount of time to wait after opening a page befor rendering an image, typically to allow scripts to load on the target page.</p>
 								<p><strong>Example:</strong> <code>1500</code> will timeout at 1.5 seconds.</p>
-							
 							</div>
 						</div>
 						<hr>
-						<h3>Cache Settings</h3>
-						
-						<div style="padding-left: 10pt;">
-						
-							<h4>Location</h4>
-							
-							<div style="padding-left: 10pt;">
-								<p>
-									<strong>/ </strong><input type="text" size=20 id="snapshot_cache_path" name="snapshot_cache_path" value="$opt[10]" /><strong>/</strong> <small> This must be relative to YOURLS root direcotry. Do not include a beginning or trailing slash. </small>
-								</p>
-								<p>In order for this folder to be automatically created and moved, your webserver needs write permissions on the parent folder. Otherwise, you will have to add it yourself with the correct permissions.</p>
-								<p>The default location is in the YOURLS user folder, ie <code>/path/to/www/YOURLS/user/cache/preview/</code></p>
-							</div>
-							
-							<h4>Expiration</h4>
-							
-							<div style="padding-left: 10pt;">
-								<p>
-									Replace an image when it is older than 
-									<input type="text" size=4 id="snapshot_cache_expire" name="snapshot_cache_expire" value="$opt[11]" />
-									<select name="snapshot_cache_expire_mod">
-										<option value="$opt[12]" selected >Select One</option>
-										<option value="min">Minutes</option>
-										<option value="hours">Hours</option>
-										<option value="days">Days</option>
-										<option value="weeks">Weeks</option>
-									</select> <small> Currently $opt[12]</small>.
-								</p>
-								<p>This can be helpful in case of frequent requests.</p>
-								
-							</div>
-													
-							<h4>Cache Fate</h4>
-						
-							<div style="padding-left: 10pt;">
-							
-								<div style="padding-left: 10pt;">					           		
-									<input type="hidden" name="snapshot_cache_fate" value="preserve">
-				  					<input type="radio" name="snapshot_cache_fate" value="preserve" $P_chk> Preserve<br>
-				  					<input type="radio" name="snapshot_cache_fate" value="delete" $D_chk> Delete<br>
-				  					<p>Decide what happens to the cache when the plugin is deactivated</p>
-			  					</div>
-		  					</div>
-						</div>
-						
 						<input type="hidden" name="nonce" value="$nonce" />
 						<p><input type="submit" value="Submit" /></p>
 					</form>
@@ -287,9 +271,8 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 				<div id="stat_tab_cache" class="tab">
 				
 					<h3>Status</h3>
-						
 					<p>Currently the cache consists of $cstat[1] files totaling $cstat[0], with $cstat[3] remaining on your $cstat[2] drive.</p>
-					
+					<hr>
 					<h3>Flush Cache</h3>
 					<form method="post">
 						<p>Delete any files order than 
@@ -311,7 +294,57 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 						<input type="hidden" name="nonce" value="$nonce" />
 						<p><input type="submit" value="Submit" /></p>
 					</form>
+				</div>
+
+				<div id="stat_tab_infos" class="tab">
+
+					<h3>Subdomain example</h3>
+					
+					<p>This explains how to configure an Apache web server to use a subdomain, such as <code>https://preview.$me</code> instead of <code>https://$me/V$opt[0]</code> to display your preview pages.</p>
+					
+					<h4>Part one: The virtual host</h4>
+					
+					<p>To use a subdomain for previews, we first need to add it in to the YOURLS virtual host conf file in Apache using the <code>ServerAlias</code> directive. Your conf file should look something like the following; notice that we are making use of the subdomain "<code>preview</code>".</p>
+<pre>
+&#60;VirtualHost *:80&#62;
+
+	ServerName $me
+	<strong>ServerAlias preview.$me</strong>
+	
+	DocumentRoot /var/www/YOURLS/
+	&#60;Directory /var/www/YOURLS/&#62;
+		Options -Indexes +FollowSymLinks +MultiViews
+		AllowOverride All
+		Order allow,deny
+		allow from all
+	&#60;/Directory&#62;
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel info
+	ErrorLog /var/log/apache2/error.log
+	CustomLog /var/log/apache2/access.log combined
+	
+&#60;/VirtualHost&#62;
+</pre>
+					<p>You might find your Apache default virtual host config file at <code>/etc/apache2/sites-available/000-default.conf</code>.</p>
+					<p>Once you have made your adjustments make sure to save the file and restart Apache.</p>
+					
+					<h4>Part Two: YOURLS .htaccess file</h4>
+					
+					<p>The following rules need to be added in to the very top of the YOURLS .htaccess file. They make use of both <code>mod_rewrite</code> and <code>mod_proxy</code>, so both of these modules need to be enabled on your server.
+<pre>
+RewriteEngine On
+
+# SNAPSHOT - PREVIEW
+RewriteCond %{HTTP_HOST} ^<strong>preview</strong>\.(<strong>$me_0</strong>\.<strong>$me_1</strong>)$ [NC]
+RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
+</pre>
+				<p>These rules have been generated using this site's current configuration. Any changes to your setup will necessitate an alteration of these rules in your system.</p>
+				<p><strong>NOTE:</strong> If you are using SSL on your site, make certain to set <code>SSLProxyEngine on</code> in your virtual host, otherwise these proxies will fail. Else, you will have to adjust the above code accordingly.</p>
+
 					<hr>
+
 					<h3>API</h3>
 					
 					<p>Snapshot exposes an API call, <code>cflush</code>, that can be used to flush the cache. To use it, send an API request to <code>$myself/yourls-api.php</code> via POST (reccomended) or GET using the following parameter:</p>
@@ -344,6 +377,7 @@ RewriteRule ^/?([a-zA-Z0-9]+)$ https://%1/$1<strong>$opt[0]</strong> [P]
 
 					<p>Look here for more info on <a href="https://help.ubuntu.com/community/CronHowto" target="_blank" >cron</a> and <a href="https://www.gnu.org/software/wget/manual/html_node/HTTP-Options.html" target="_blank">wget</a>.</p>
 					<p><strong>NOTE</strong>: The examples on this page have been pre-formatted to work with this site.</p>
+
 				</div>
 			</div>
 		</div>
@@ -353,7 +387,7 @@ HTML;
 // CSS for YOURLS style preview page and plugin config
 yourls_add_action('html_head', 'refetch_head');
 function refetch_head(){
-	if ( YOURLS_JP23_HEAD_FILES == null ) {
+	if ( 'YOURLS_JP23_HEAD_FILES' == null ) {
 		define( 'YOURLS_JP23_HEAD_FILES', true );
 		$home = YOURLS_SITE;
 		echo "\n<! --------------------------JP23_HEAD_FILES Start-------------------------- >\n";
@@ -387,6 +421,7 @@ function snapshot_config() {
 	$cacheXM = yourls_get_option( 'snapshot_cache_expire_mod' );
 	$c_fate  = yourls_get_option( 'snapshot_cache_fate' );
 	$e_log	 = yourls_get_option( 'snapshot_err_log' );
+	$USRV_DIR 	= yourls_get_option('usrv_cache_loc');
 	
 	// Set defaults if necessary
 	if( $char		== null ) $char 	= '~';
@@ -399,12 +434,14 @@ function snapshot_config() {
 	if( $clip_h  	== null ) $clip_h 	= '640';
 	if( $imgType 	== null ) $imgType 	= 'jpg';
 	if( $delay		== null ) $delay 	= '1500';		// 1.5 seconds
-	if( $cache 		== null ) $cache 	= 'user/cache/preview';
+	if( $cache 		== null ) $cache 	= 'preview';
 	if( $cacheX		== null ) $cacheX 	= '1';
 	if( $cacheXM 	== null ) $cacheXM 	= 'hours';
 	if( $dwidth 	== null ) $dwidth 	= '560';
 	if( $c_fate		== null ) $c_fate	= 'preserve';
 	if( $e_log		== null ) $e_log	= 'true';
+	if ($USRV_DIR 	== null) $USRV_DIR		= dirname(YOURLS_ABSPATH)."/YOURLS_CACHE";
+							 $DIR_PATH 		= $USRV_DIR.'/'.$cache;
 	
 	return array(
 	$char,		// opt[0]
@@ -421,26 +458,49 @@ function snapshot_config() {
 	$cacheX	,	// opt[11]
 	$cacheXM,	// opt[12]
 	$c_fate,	// opt[13]
-	$e_log		// opt[14]
+	$e_log,		// opt[14]
+	$DIR_PATH	// opt[15]
 	);
 }
 
 // Check for form 0 - Main
 function snaphsot_form_0() {
-	if( isset( $_POST['snapshot_char'] ) ) {
-		// Check nonce
+	if(isset($_POST['snapshot_cache_path']) ) {
+
 		yourls_verify_nonce( 'snapshot' );
-		yourls_update_option( 'snapshot_char', $_POST['snapshot_char'] );
-	if(isset($_POST['snapshot_img_display_width'])) yourls_update_option( 'snapshot_img_display_width', $_POST['snapshot_img_display_width'] );
+
+		$pcpath = $_POST['snapshot_cache_path'];
+		$ocpath = yourls_get_option( 'snapshot_cache_path' );
+		if ($pcpath !== $ocpath ) {
+			$USRV_DIR = yourls_get_option('usrv_cache_loc');
+			if ($USRV_DIR == null) $USRV_DIR = dirname(YOURLS_ABSPATH)."/YOURLS_CACHE";
+			$pcpathf = $USRV_DIR .'/'. $pcpath;
+			$ocpathf = $USRV_DIR .'/'. $ocpath;
+			if ($ocpath == null ) {
+				snapshot_cache_mkdir( $pcpathf );
+				yourls_update_option( 'snapshot_cache_path', $pcpath);
+			} else {
+				snapshot_cache_mvdir ( $ocpathf , $pcpathf );
+				yourls_update_option( 'snapshot_cache_path', $pcpath );
+			}
+		}
+		// carry on with lazy value updating...
+		if(isset($_POST['snapshot_cache_expire'])) yourls_update_option( 'snapshot_cache_expire', $_POST['snapshot_cache_expire'] );
+		if(isset($_POST['snapshot_cache_expire_mod'])) yourls_update_option( 'snapshot_cache_expire_mod', $_POST['snapshot_cache_expire_mod'] );
+		if(isset($_POST['snapshot_cache_fate'])) yourls_update_option( 'snapshot_cache_fate', $_POST['snapshot_cache_fate'] );
+		if(isset( $_POST['snapshot_char'] ) )yourls_update_option( 'snapshot_char', $_POST['snapshot_char'] );
+		if(isset($_POST['snapshot_img_display_width'])) yourls_update_option( 'snapshot_img_display_width', $_POST['snapshot_img_display_width'] );
 	}
 }
 
 // Check for form 1 - Screen\PhantomJS
 function snaphsot_form_1() {
-	if( isset( $_POST['snapshot_phantomjs_path'] ) ) {
-		// Check nonce
+	if(isset($_POST['snapshot_err_log'])) {
+
 		yourls_verify_nonce( 'snapshot' );
-		yourls_update_option( 'snapshot_phantomjs_path', $_POST['snapshot_phantomjs_path'] );
+
+	 	yourls_update_option( 'snapshot_err_log', $_POST['snapshot_err_log'] );
+		if(isset($_POST['snapshot_phantomjs_path'])) yourls_update_option( 'snapshot_phantomjs_path', $_POST['snapshot_phantomjs_path'] );
 		if(isset($_POST['snapshot_timeout'])) yourls_update_option( 'snapshot_timeout', $_POST['snapshot_timeout'] );
 		if(isset($_POST['snapshot_img_w'])) yourls_update_option( 'snapshot_img_w', $_POST['snapshot_img_w'] );
 		if(isset($_POST['snapshot_img_h'])) yourls_update_option( 'snapshot_img_h', $_POST['snapshot_img_h'] );
@@ -448,28 +508,6 @@ function snaphsot_form_1() {
 		if(isset($_POST['snapshot_clip_h'])) yourls_update_option( 'snapshot_clip_h', $_POST['snapshot_clip_h'] );
 		if(isset($_POST['snapshot_img_type'])) yourls_update_option( 'snapshot_img_type', $_POST['snapshot_img_type'] );
 		if(isset($_POST['snapshot_delay'])) yourls_update_option( 'snapshot_delay', $_POST['snapshot_delay'] );
-		
-		// every submission resubmits all values, we just repost them without checking to save time. We check here, so that
-		// we can create the database if it was never created, or move it if it was moved.
-		if(isset($_POST['snapshot_cache_path']) ) {
-			$pcpath = $_POST['snapshot_cache_path'];
-			$ocpath = yourls_get_option( 'snapshot_cache_path' );
-			if ($pcpath !== $ocpath ) {
-				if ($ocpath == null ) {
-					snapshot_cache_mkdir( $pcpath );
-					yourls_update_option( 'snapshot_cache_path', $pcpath);
-				} else {
-				snapshot_cache_mvdir ( $ocpath , $pcpath );
-				yourls_update_option( 'snapshot_cache_path', $pcpath );
-				}
-			}
-		}
-		
-		// carry on with lazy value updating...
-		if(isset($_POST['snapshot_cache_expire'])) yourls_update_option( 'snapshot_cache_expire', $_POST['snapshot_cache_expire'] );
-		if(isset($_POST['snapshot_cache_expire_mod'])) yourls_update_option( 'snapshot_cache_expire_mod', $_POST['snapshot_cache_expire_mod'] );
-		if(isset($_POST['snapshot_cache_fate'])) yourls_update_option( 'snapshot_cache_fate', $_POST['snapshot_cache_fate'] );
-		if(isset($_POST['snapshot_err_log'])) yourls_update_option( 'snapshot_err_log', $_POST['snapshot_err_log'] );
 	}
 }
 
@@ -712,8 +750,7 @@ function snapshot_screen($keyword, $url) {
 		);
 	} catch (Exception $e) {
 		if($opt[14] !== 'no') {
-			$me = YOURLS_ABSPATH .'user/plugins/snapshot/';
-			file_put_contents($me . "errors.txt", "# NEW ERROR RECORD START: " . date('Y-m-d H:i:s') . PHP_EOL . "# KEYWORD: " . $keyword . PHP_EOL . "# URL: " . $url . PHP_EOL . "#" . PHP_EOL . $e . PHP_EOL . "#" . PHP_EOL, FILE_APPEND);
+			file_put_contents( dirname( __FILE__ ) . "/errors.txt", "# NEW ERROR RECORD START: " . date('Y-m-d H:i:s') . PHP_EOL . "# KEYWORD: " . $keyword . PHP_EOL . "# URL: " . $url . PHP_EOL . "#" . PHP_EOL . $e . PHP_EOL . "#" . PHP_EOL, FILE_APPEND);
 		}
 		return 'alt';
 	}	
@@ -728,9 +765,8 @@ function snapshot_screen($keyword, $url) {
 // flush
 function snapshot_cache_flush($age) {
 
-	$cache	 = yourls_get_option( 'snapshot_cache_path' );
-	if( $cache 	 == null ) $cache 	= 'user/cache/preview';
-	$dir = YOURLS_ABSPATH . '/' . $cache;
+	$opt = snapshot_config();	
+	$dir = $opt[15];
 	$now = time();
 	
 	if (file_exists($dir)) {
@@ -776,9 +812,8 @@ function snapshot_cache_flush_api() {
 // get cache disk use data
 function snapshot_cache_stats() {
 
-	$cache = yourls_get_option( 'snapshot_cache_path' );
-	if( $cache == null ) $cache = 'user/cache/preview';
-	$dir   = YOURLS_ABSPATH . '/' . $cache;
+	$opt = snapshot_config();	
+	$dir = $opt[15];
 	
 	$size	= snapshot_cache_size($dir);
 	$pop	= snapshot_cache_pop($dir);
@@ -848,14 +883,21 @@ function snapshot_format_size($bytes){
 yourls_add_action('activated_snapshot/plugin.php', 'snapshot_activate');
 function snapshot_activate() {
 
+	if(!(yourls_is_active_plugin('usrv/plugin.php'))) {
+		die('
+			<div class="notice">
+				<p style="text-align:center;font-weight:bold;color:red;">This plugin depends on the <a href="https://github.com/joshp23/YOURLS-U-SRV" target="_blank">U-SRV</a> plugin, activate it first in the admin section.</p>
+			</div>'
+		);
+	}
+
 	$opt = snapshot_config();
-	snapshot_cache_mkdir( $opt[10] );
+	snapshot_cache_mkdir( $opt[15] );
 }
 
 // Make dir if null
 function snapshot_cache_mkdir( $var ) {
 
-	$var = YOURLS_ABSPATH . '/' . $var . '/';
 	if ( !file_exists( $var ) ) {
 		if ( mkdir( $var ) ) {
 			chmod( $var, 0777 );
@@ -869,8 +911,8 @@ function snapshot_cache_mkdir( $var ) {
 // Move directory if option is updated
 function snapshot_cache_mvdir( $old , $new ) {
 
-	$old = YOURLS_ABSPATH . '/' . $old . '/';
-	$new = YOURLS_ABSPATH . '/' . $new . '/';
+//	$old = YOURLS_ABSPATH . '/' . $old . '/';
+//	$new = YOURLS_ABSPATH . '/' . $new . '/';
 	
 	if ( !file_exists( $old ) || $old == null ) {
 		snapshot_cache_mkdir( $new );
@@ -888,10 +930,10 @@ yourls_add_action( 'delete_link', 'delete_snapshot_cache_img' );
 function delete_snapshot_cache_img( $args ) {
 	
 	$opt 	 = snapshot_config();
-	$dir 	 = YOURLS_ABSPATH . '/' . $opt[10];
-    	$keyword = $args[0];
+	$dir 	 = $opt[15];
+    $keyword = $args[0];
     	
-    	$target  = $dir . '/' . md5($keyword) . '.' . $opt[8];
+    $target  = $dir . '/' . md5($keyword) . '.' . $opt[8];
 	if (file_exists($target)) unlink($target);
 }
 
@@ -900,7 +942,7 @@ yourls_add_action('deactivated_snapshot/plugin.php', 'snapshot_deactivate');
 function snapshot_deactivate() {
 
 	$opt = snapshot_config();
-	$dir = YOURLS_ABSPATH . '/' . $opt[10] . '/';
+	$dir = $opt[15];
 	
 	if($opt[13] == 'delete') {
 		if (file_exists($dir)) {

@@ -3,6 +3,8 @@ YOURLS URL preview plugin with image caching powered by PhantomJS
 
 Snapshot is a visual preview plugin for [YOURLS](https://yourls.org/) personal URL shortener that uses the power of [PhantomJS](http://phantomjs.org/) headless web browser via the [Screen](https://github.com/microweber/screen) PHP library.
 
+Updating to v3.0.0 + from the 2.x.x branch may cause some unexpected behavior. Flushing the cache may be necessary. Note, attempting to install this before the required U-SRV will result in failure.
+
 ## Features & Function
 
 #### Easy Configuration
@@ -32,6 +34,7 @@ Because of the U-SRV method of image serving, it is a snap to integrate Snapshot
 
 ## Requirements and Installation
 * Install and configure YOURLS
+* Install and configure [U-SRV](https://github.com/joshp23/YOURLS-U-SRV) v2.0.0 +
 * Install phantomjs: details and prebuilt binaries can be found [here](http://phantomjs.org/download.html)
   * __NOTE:__ On Debian/Ubuntu there is a [known bug](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=808242) with upstream packaging. Installing the prebuilt binary is therefore reccomended. Ex:
   ```
@@ -47,8 +50,7 @@ Because of the U-SRV method of image serving, it is a snap to integrate Snapshot
   ```
   $ sudo apt-get install fontconfig freetype*
   ```
-* Grab Snapshot's [latest release](https://github.com/joshp23/YOURLS-Snapshot/releases/latest) and extract the `snapshot` folder into `YOURLS/user/plugins/`
-* Copy or link the file `YOURLS/user/plugins/snapshot/assets/U-SRV/srv.php` into `YOURLS/pages/`
+* Grab Snapshot's [latest release](https://github.com/joshp23/YOURLS-Snapshot/releases/latest) and extract the `snapshot` folder into `YOURLS/user/plugins/`  
 * Permissions:
   * Recursively make the folder `YOURLS/user/plugins/snapshot/screen/jobs` writable by your webserver
   * Make the directory `YOURLS/user` writable by your webserver OR create a `YOURLS/user/cache/snapshot/` directory that is writable by your webserver.
@@ -75,7 +77,7 @@ This plugin is offered "as is", and may or may not work for you. Give it a try, 
 
 ===========================
 
-    Copyright (C) 2016 - 2017 Josh Panter
+    Copyright (C) 2016 - 2018 Josh Panter
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
