@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 3.0.0
+Version: 3.0.1
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -385,21 +385,19 @@ HTML;
 }
 
 // CSS for YOURLS style preview page and plugin config
-yourls_add_action('html_head', 'refetch_head');
-function refetch_head(){
-	if ( 'YOURLS_JP23_HEAD_FILES' == null ) {
-		define( 'YOURLS_JP23_HEAD_FILES', true );
+yourls_add_action('html_head', 'snapshot_head');
+function snapshot_head($context){
+	if ($context[0] == 'plugin_page_snapshot' ) {
 		$home = YOURLS_SITE;
-		echo "\n<! --------------------------JP23_HEAD_FILES Start-------------------------- >\n";
-		echo "<link rel=\"stylesheet\" href=\"".$home()."/css/infos.css?v=".YOURLS_VERSION."\" type=\"text/css\" media=\"screen\" />\n";
-		echo "<script src=\"".$home()."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
-		echo "<! --------------------------JP23_HEAD_FILES END---------------------------- >\n";
+		echo "<link rel=\"stylesheet\" href=\"".$home."/css/infos.css?v=".YOURLS_VERSION."\" type=\"text/css\" media=\"screen\" />\n";
+		echo "<script src=\"".$home."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
+	} elseif ($context[0] = 'preview') {
+		$loc = yourls_plugin_url(dirname(__FILE__));
+		$file = dirname( __FILE__ )."/plugin.php";
+		$data = yourls_get_plugin_data( $file );
+		$v = $data['Version'];
+		echo "\n<! ---snapshot--- >\n<link rel=\"stylesheet\" href=\"".$loc."/assets/preview.css?v=".$v."\" type=\"text/css\" />\n<! ---snapshot--- >\n";
 	}
-	$loc = yourls_plugin_url(dirname(__FILE__));
-	$file = dirname( __FILE__ )."/plugin.php";
-	$data = yourls_get_plugin_data( $file );
-	$v = $data['Version'];
-	echo "<! ---snapshot--- ><link rel=\"stylesheet\" href=\"".$loc."/assets/preview.css?v=".$v."\" type=\"text/css\" />\n";
 }
 
 // Get options and set defaults
