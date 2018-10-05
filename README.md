@@ -75,6 +75,11 @@ If you appreciate this code and want to show thanks, please feel free go to my w
 
 This plugin is offered "as is", and may or may not work for you. Give it a try, and have fun! If you run into any problems, please open up an [issue](https://github.com/joshp23/YOURLS-Snapshot/issues) on github, or simply submit a pull request with your fix.
 
+### Support Dev
+All of my published code is developed and maintained in spare time, if you would like to support development of this, or any of my published code, I have set up a Liberpay account for just this purpose. Thank you.
+
+<noscript><a href="https://liberapay.com/joshu42/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+
 ===========================
 
     Copyright (C) 2016 - 2018 Josh Panter
