@@ -52,7 +52,7 @@ Because of the U-SRV method of image serving, it is a snap to integrate Snapshot
   ```
 * Grab Snapshot's [latest release](https://github.com/joshp23/YOURLS-Snapshot/releases/latest) and extract the `snapshot` folder into `YOURLS/user/plugins/`  
 * Permissions:
-  * Recursively make the folder `YOURLS/user/plugins/snapshot/screen/jobs` writable by your webserver
+  * Recursively make the folder `YOURLS/user/plugins/snapshot/assets/screen/jobs` writable by your webserver
   * Make the directory `YOURLS/user` writable by your webserver OR create a `YOURLS/user/cache/snapshot/` directory that is writable by your webserver.
 * Go to the YOURLS `Manage Plugins` page and enable this plugin.
 * Go to the `Snapshot` page and follow the instructions there.
