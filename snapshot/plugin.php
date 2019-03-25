@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 3.0.1
+Version: 3.0.2
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -27,7 +27,7 @@ function snapshot_do_page() {
 	$opt = snapshot_config();
 	
 	// Make sure cache exists
-	snapshot_cache_mkdir( $opt[10] );
+	snapshot_cache_mkdir( $opt[15] );
 	
 	// Create nonce
 	$nonce = yourls_create_nonce( 'snapshot' );
@@ -693,7 +693,7 @@ function snapshot_request($keyword, $url) {
 
 	$opt  = snapshot_config();
 	$file = md5($keyword) . '.' . $opt[8];
-	$path = $opt[10] . '/' . $file;
+	$path = $opt[15] . '/' . $file;
 	
 	// calculate/set cachetimes
 	if (file_exists($path)) { 
@@ -738,7 +738,7 @@ function snapshot_screen($keyword, $url) {
 	$screenCapture->setClipHeight($opt[7]);
 	$screenCapture->setImageType($opt[8]);
 	$screenCapture->setDelay($opt[9]);
-	$screenCapture->output->setLocation($opt[10]);
+	$screenCapture->output->setLocation($opt[15]);
 	try {		
 		$screenCapture->save($file);
 		$screenCapture->jobs->clean();
