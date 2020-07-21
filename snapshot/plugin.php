@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 3.0.2
+Version: 3.0.3
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -118,7 +118,7 @@ HTML;
 		echo '<span style="color:green;">Success</span>: U-SRV is installed and enabled.</p>';
 		echo '<p><code>srv.php</code> satus: ';
 
-		$srvLoc = YOURLS_ABSPATH.'/pages/srv.php';
+		$srvLoc = YOURLS_ABSPATH.'/user/pages/srv.php';
 		if ( !file_exists( $srvLoc ) ) {
 	 		echo '<font color="red">srv.php is not in the "pages" directory!</font>';
 		} else { 
@@ -404,21 +404,21 @@ function snapshot_head($context){
 function snapshot_config() {
 
 	// Get values from DB
-	$char	 = yourls_get_option( 'snapshot_char' );
-	$dwidth  = yourls_get_option( 'snapshot_img_display_width' );
-	$binPath = yourls_get_option( 'snapshot_phantomjs_path' );
-	$timeOut = yourls_get_option( 'snapshot_timeout' );
-	$img_w	 = yourls_get_option( 'snapshot_img_w' );
-	$img_h	 = yourls_get_option( 'snapshot_img_h' );
-	$clip_w	 = yourls_get_option( 'snapshot_clip_w' );
-	$clip_h	 = yourls_get_option( 'snapshot_clip_h' );
-	$imgType = yourls_get_option( 'snapshot_img_type' );
-	$delay 	 = yourls_get_option( 'snapshot_delay' );
-	$cache	 = yourls_get_option( 'snapshot_cache_path' );	
-	$cacheX	 = yourls_get_option( 'snapshot_cache_expire' );
-	$cacheXM = yourls_get_option( 'snapshot_cache_expire_mod' );
-	$c_fate  = yourls_get_option( 'snapshot_cache_fate' );
-	$e_log	 = yourls_get_option( 'snapshot_err_log' );
+	$char 		= yourls_get_option( 'snapshot_char' );
+	$dwidth 	= yourls_get_option( 'snapshot_img_display_width' );
+	$binPath 	= yourls_get_option( 'snapshot_phantomjs_path' );
+	$timeOut 	= yourls_get_option( 'snapshot_timeout' );
+	$img_w 		= yourls_get_option( 'snapshot_img_w' );
+	$img_h 		= yourls_get_option( 'snapshot_img_h' );
+	$clip_w 	= yourls_get_option( 'snapshot_clip_w' );
+	$clip_h		= yourls_get_option( 'snapshot_clip_h' );
+	$imgType 	= yourls_get_option( 'snapshot_img_type' );
+	$delay 		= yourls_get_option( 'snapshot_delay' );
+	$cache 		= yourls_get_option( 'snapshot_cache_path' );	
+	$cacheX	 	= yourls_get_option( 'snapshot_cache_expire' );
+	$cacheXM 	= yourls_get_option( 'snapshot_cache_expire_mod' );
+	$c_fate 	= yourls_get_option( 'snapshot_cache_fate' );
+	$e_log 		= yourls_get_option( 'snapshot_err_log' );
 	$USRV_DIR 	= yourls_get_option('usrv_cache_loc');
 	
 	// Set defaults if necessary
@@ -551,9 +551,9 @@ function snapshot_age_mod($age, $mod) {
 	return $age;
 }
 
-// Handle failed loader request and check for trigger character
-yourls_add_action( 'loader_failed', 'snapshot_loader_failed' );
-function snapshot_loader_failed( $args ) {
+// Check request for trigger character
+yourls_add_action( 'pre_load_template', 'snapshot_precheck' );
+function snapshot_precheck( $args ) {
 
 	$opt = snapshot_config();
 	

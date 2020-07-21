@@ -33,7 +33,7 @@ Because of the U-SRV method of image serving, it is a snap to integrate Snapshot
 - Self-cleaning: Cached images are deleted when a keyword is removed from database.
 
 ## Requirements and Installation
-* Install and configure YOURLS
+* Install and configure YOURLS 1.7.9 +
 * Install and configure [U-SRV](https://github.com/joshp23/YOURLS-U-SRV) v2.0.0 +
 * Install phantomjs: details and prebuilt binaries can be found [here](http://phantomjs.org/download.html)
   * __NOTE:__ On Debian/Ubuntu there is a [known bug](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=808242) with upstream packaging. Installing the prebuilt binary is therefore reccomended. Ex:
@@ -82,7 +82,7 @@ All of my published code is developed and maintained in spare time, if you would
 
 ===========================
 
-    Copyright (C) 2016 - 2018 Josh Panter
+    Copyright (C) 2016 Josh Panter
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
