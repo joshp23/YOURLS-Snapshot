@@ -3,7 +3,7 @@
 Plugin Name: Snapshot: Visual URL Preview
 Plugin URI: https://github.com/joshp23/YOURLS-Snapshot
 Description: Preview plugin with an image Cahche
-Version: 3.0.3
+Version: 3.0.4
 Author: Josh Panter <joshu@unfettered.net>
 Author URI: https://unfettered.net
 */
@@ -118,11 +118,11 @@ HTML;
 		echo '<span style="color:green;">Success</span>: U-SRV is installed and enabled.</p>';
 		echo '<p><code>srv.php</code> satus: ';
 
-		$srvLoc = YOURLS_ABSPATH.'/user/pages/srv.php';
+		$srvLoc = YOURLS_PAGEDIR.'/srv.php';
 		if ( !file_exists( $srvLoc ) ) {
 	 		echo '<font color="red">srv.php is not in the "pages" directory!</font>';
 		} else { 
-			$pluginData = yourls_get_plugin_data( YOURLS_ABSPATH.'/user/plugins/usrv/plugin.php' );
+			$pluginData = yourls_get_plugin_data( YOURLS_PLUGINDIR.'/usrv/plugin.php' );
 			$pluginVers = $pluginData['Version'];
 			$srvData = yourls_get_plugin_data( $srvLoc );
 			$servVers = $srvData['Version'];
@@ -438,8 +438,8 @@ function snapshot_config() {
 	if( $dwidth 	== null ) $dwidth 	= '560';
 	if( $c_fate		== null ) $c_fate	= 'preserve';
 	if( $e_log		== null ) $e_log	= 'true';
-	if ($USRV_DIR 	== null) $USRV_DIR		= dirname(YOURLS_ABSPATH)."/YOURLS_CACHE";
-							 $DIR_PATH 		= $USRV_DIR.'/'.$cache;
+	if ($USRV_DIR 	== null) $USRV_DIR	= dirname(YOURLS_ABSPATH)."/YOURLS_CACHE";
+							 $DIR_PATH 	= $USRV_DIR.'/'.$cache;
 	
 	return array(
 	$char,		// opt[0]
